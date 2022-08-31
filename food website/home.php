@@ -12,6 +12,9 @@ if(isset($_SESSION['user_id'])){
 
 include 'components/add_cart.php';
 
+
+
+ 
 ?>
 
 <!DOCTYPE html>
@@ -47,7 +50,7 @@ include 'components/add_cart.php';
             <div class="content">
                <span>order online</span>
                <h3>delicious pizza</h3>
-               <a href="menu.html" class="btn">see menus</a>
+               <a href="menu.html" class="btn">seemenus</a>
             </div>
             <div class="image">
                <img src="images/home-img-1.png" alt="">
@@ -124,10 +127,26 @@ include 'components/add_cart.php';
    <div class="box-container">
 
       <?php
-         $select_products = $conn->prepare("SELECT * FROM `products` LIMIT 6");
-         $select_products->execute();
-         if($select_products->rowCount() > 0){
-            while($fetch_products = $select_products->fetch(PDO::FETCH_ASSOC)){
+ $ch=curl_init();
+ curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/products.php?key=6CU1qSJfcs");
+ $header[]="Content-Type:applictaion/json";
+ curl_setopt($ch,CURLOPT_POST,false);
+ curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+ curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+
+ curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+
+
+ $result=curl_exec($ch);
+
+$result= json_decode($result,true);
+
+
+        
+   
+
+           foreach($result['productData']['data'] as  $fetch_products){
+         
       ?>
       <form action="" method="post" class="box">
          <input type="hidden" name="pid" value="<?= $fetch_products['id']; ?>">
@@ -145,10 +164,9 @@ include 'components/add_cart.php';
          </div>
       </form>
       <?php
+      
             }
-         }else{
-            echo '<p class="empty">no products added yet!</p>';
-         }
+         
       ?>
 
    </div>
