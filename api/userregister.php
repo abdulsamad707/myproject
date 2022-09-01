@@ -46,7 +46,7 @@ $posttye=$_SERVER['REQUEST_METHOD'];
       $html.="<br> Thanks For Register With Us Please  Verify Your Email At <a href='http://localhost/grocery/verify.html?token=$rdStr&mobile=$mobile'> verify  </a> ";
          $email_message="Your Otp is $otp ".$html;
             $subject="Verification Code";
-        $sendMailer=sendMail($email_message,$email,$username,$subject);
+      /*  $sendMailer=sendMail($email_message,$email,$username,$subject);*/
         $number="+".$mobile;
         $message="Thanks For Registration $username Your OTP is ".$otp."Regards IAD Project Grocery PK";
    /*    $json= SendSms($number,$message);*/

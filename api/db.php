@@ -17,7 +17,7 @@ $this->pdo=$pdo;
 
 }
 function getConnection(){
-  $db= $this->pdo=$pdo;
+  $db= $this->pdo;
   return $db;
 }
 

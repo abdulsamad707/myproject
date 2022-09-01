@@ -1,9 +1,9 @@
 <?php
 
 include 'components/connect.php';
-
+include  'components/function.php';
 session_start();
-
+$ipd_add=get_client_ip();
 if(isset($_SESSION['user_id'])){
    $user_id = $_SESSION['user_id'];
 }else{
@@ -26,12 +26,22 @@ if(isset($_POST['delete_all'])){
 }
 
 if(isset($_POST['update_qty'])){
-   $cart_id = $_POST['cart_id'];
-   $qty = $_POST['qty'];
+  $update_data['ip_add']= $ipd_add;
+  $qty = $_POST['qty'];
+  $update_data["quantity"]=$qty;
+  /* $cart_id = $_POST['cart_id'];
+
    $qty = filter_var($qty, FILTER_SANITIZE_STRING);
    $update_qty = $conn->prepare("UPDATE `cart` SET quantity = ? WHERE id = ?");
    $update_qty->execute([$qty, $cart_id]);
-   $message[] = 'cart quantity updated';
+   $message[] = 'cart quantity updated';*/
+$ch = curl_init();
+$ip_add=get_client_ip();
+
+
+curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/update_add_cart.php?key=6CU1qSJfcs");
+curl_setopt($ch, CURLOPT_POST, 1);
+$post_data["user_id"] =$user_id;
 }
 
 $grand_total = 0;
@@ -73,21 +83,32 @@ $grand_total = 0;
    <div class="box-container">
 
       <?php
+ $ch=curl_init();
+ curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/carts.php?key=6CU1qSJfcs&user_id=$user_id");
+ $header[]="Content-Type:applictaion/json";
+ curl_setopt($ch,CURLOPT_POST,false);
+ curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+ curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+ curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+ $result=curl_exec($ch);
+ $result=json_decode($result,true);
+
+
+
          $grand_total = 0;
-         $select_cart = $conn->prepare("SELECT * FROM `cart` WHERE user_id = ?");
-         $select_cart->execute([$user_id]);
-         if($select_cart->rowCount() > 0){
-            while($fetch_cart = $select_cart->fetch(PDO::FETCH_ASSOC)){
+        foreach($result["data"] as $fetch_cart){
+         
       ?>
       <form action="" method="post" class="box">
-         <input type="hidden" name="cart_id" value="<?= $fetch_cart['id']; ?>">
+         <input type="hidden" name="cart_id" value="<?= $fetch_cart['cart_id']; ?>">
          <a href="quick_view.php?pid=<?= $fetch_cart['pid']; ?>" class="fas fa-eye"></a>
          <button type="submit" class="fas fa-times" name="delete" onclick="return confirm('delete this item?');"></button>
-         <img src="uploaded_img/<?= $fetch_cart['image']; ?>" alt="">
-         <div class="name"><?= $fetch_cart['name']; ?></div>
+         <img src="uploaded_img/<?= $fetch_cart['product_image']; ?>" alt="">
+         <div class="name"><?= $fetch_cart['product_name']; ?></div>
          <div class="flex">
             <div class="price"><span>$</span><?= $fetch_cart['price']; ?></div>
             <input type="number" name="qty" class="qty" min="1" max="99" value="<?= $fetch_cart['quantity']; ?>" maxlength="2">
+              <input type="hidden" name="pid" value="<?php echo $fetch_cart['pid']?>" >
             <button type="submit" class="fas fa-edit" name="update_qty"></button>
          </div>
          <div class="sub-total"> sub total : <span>$<?= $sub_total = ($fetch_cart['price'] * $fetch_cart['quantity']); ?>/-</span> </div>
@@ -95,9 +116,7 @@ $grand_total = 0;
       <?php
                $grand_total += $sub_total;
             }
-         }else{
-            echo '<p class="empty">your cart is empty</p>';
-         }
+         
       ?>
 
    </div>
