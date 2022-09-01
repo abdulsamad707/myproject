@@ -18,7 +18,7 @@
       <div class="box">
          <img src="images/map-icon.png" alt="">
          <h3>our address</h3>
-         <a href="#">mumbai, india - 400104</a>
+         <a href="#">karachi, pakistan - 400104</a>
       </div>
 
       <div class="box">

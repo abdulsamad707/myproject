@@ -29,15 +29,19 @@ if($totalRecord>0){
     
            if($action==="add"){
             $stat_message="already added to cart!";
-           }else{
-            $cart_id = $_POST['cart_id'];
-            $qty = $_POST['qty'];
-            print_r($cartdatadetail);
-            print_r($cartdata);
-                 die();
-            $qty = filter_var($qty, FILTER_SANITIZE_STRING);
-            $update_qty = $conn->prepare("UPDATE `cart` SET quantity = ? WHERE id = ?");
-            $update_qty->execute([$qty, $cart_id]);
+           }if($action==="update"){
+
+
+
+
+           
+         
+            $cart_id=$cartdatadetail["data"][0]['id'];
+            $qty = filter_var($quantity, FILTER_SANITIZE_STRING);
+             $sql="UPDATE cart SET quantity = '$qty' where id='$cart_id'";
+             $data->sql($sql,"update");
+
+     
 
             $stat_message= "cart quantity updated";
            }

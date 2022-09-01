@@ -36,9 +36,9 @@ $post=json_encode($post);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 curl_setopt($ch, CURLOPT_FAILONERROR, true); 
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+   
 $server_output = curl_exec($ch);
-print_r($server_output);
-die();
+
 $server_output=json_decode($server_output,true);
 
 $messages=$server_output['message'];

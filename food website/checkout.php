@@ -1,7 +1,7 @@
 <?php
 
 include 'components/connect.php';
-
+include  'components/function.php';
 session_start();
 
 if(isset($_SESSION['user_id'])){
@@ -26,22 +26,65 @@ if(isset($_POST['submit'])){
    $total_products = $_POST['total_products'];
    $total_price = $_POST['total_price'];
 
+
+       
+        
+        $ch=curl_init();
+        curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/carts.php?key=6CU1qSJfcs&user_id=$user_id");
+        $header[]="Content-Type:applictaion/json";
+        curl_setopt($ch,CURLOPT_POST,false);
+        curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+        $result_cart_number=curl_exec($ch);
+        $result_cart_number=json_decode($result_cart_number,true);
+          $totalCartItem=$result_cart_number['totalRecord'];
    $check_cart = $conn->prepare("SELECT * FROM `cart` WHERE user_id = ?");
    $check_cart->execute([$user_id]);
 
-   if($check_cart->rowCount() > 0){
+   if(  $totalCartItem > 0){
 
       if($address == ''){
          $message[] = 'please add your address!';
       }else{
-         
-         $insert_order = $conn->prepare("INSERT INTO `orders`(user_id, name, number, email, method, address, total_products, total_price) VALUES(?,?,?,?,?,?,?,?)");
+          unset($_POST['submit']);
+         $post_orders=$_POST;
+         $post['user_id']=$user_id;
+         $post_orders=json_encode($post_orders);
+           $ch = curl_init();
+         curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/checkout.php?key=6CU1qSJfcs");
+         curl_setopt($ch, CURLOPT_POST, 1);
+         curl_setopt($ch, CURLOPT_POSTFIELDS, $post_orders);
+         curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+         $server_output_order = curl_exec($ch);
+         $server_output_order = json_decode($server_output_order,true);
+       
+           extract($server_output_order);
+     
+          if($code==200){
+            echo $insertId;
+          }
+         die();
+         $ch = curl_init();
+
+         $delete_data["user_id"]=$user_id;
+         $delete_data=json_encode($delete_data);
+   curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/delete_cart.php?key=6CU1qSJfcs");
+   curl_setopt($ch,CURLOPT_CUSTOMREQUEST,"DELETE" );                                                                                                                 
+   curl_setopt($ch, CURLOPT_POST, 1);
+   curl_setopt($ch, CURLOPT_POSTFIELDS, $delete_data);
+   curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+   $delete_server_output = curl_exec($ch);
+      /*   $insert_order = $conn->prepare("INSERT INTO `orders`(user_id, name, number, email, method, address, total_products, total_price) VALUES(?,?,?,?,?,?,?,?)");
          $insert_order->execute([$user_id, $name, $number, $email, $method, $address, $total_products, $total_price]);
 
          $delete_cart = $conn->prepare("DELETE FROM `cart` WHERE user_id = ?");
-         $delete_cart->execute([$user_id]);
+         $delete_cart->execute([$user_id]);*/
 
          $message[] = 'order placed successfully!';
+    
       }
       
    }else{
@@ -87,24 +130,37 @@ if(isset($_POST['submit'])){
    <div class="cart-items">
       <h3>cart items</h3>
       <?php
+      
+
+
+    
+
+
          $grand_total = 0;
          $cart_items[] = '';
          $select_cart = $conn->prepare("SELECT * FROM `cart` WHERE user_id = ?");
          $select_cart->execute([$user_id]);
-         if($select_cart->rowCount() > 0){
-            while($fetch_cart = $select_cart->fetch(PDO::FETCH_ASSOC)){
-               $cart_items[] = $fetch_cart['name'].' ('.$fetch_cart['price'].' x '. $fetch_cart['quantity'].') - ';
+           
+         $ch=curl_init();
+         curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/carts.php?key=6CU1qSJfcs&user_id=$user_id");
+         $header[]="Content-Type:applictaion/json";
+         curl_setopt($ch,CURLOPT_POST,false);
+         curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+         curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+         $result_cart=curl_exec($ch);
+         $result_cart=json_decode($result_cart,true);
+            foreach($result_cart['data'] as $fetch_cart){
+               $cart_items[] = $fetch_cart['product_name'].' ('.$fetch_cart['price'].' x '. $fetch_cart['quantity'].') - ';
                $total_products = implode($cart_items);
                $grand_total += ($fetch_cart['price'] * $fetch_cart['quantity']);
       ?>
-      <p><span class="name"><?= $fetch_cart['name']; ?></span><span class="price">$<?= $fetch_cart['price']; ?> x <?= $fetch_cart['quantity']; ?></span></p>
+      <p><span class="name"><?= $fetch_cart['product_name']; ?></span><span class="price">Rs<?= $fetch_cart['price']; ?> x <?= $fetch_cart['quantity']; ?></span></p>
       <?php
             }
-         }else{
-            echo '<p class="empty">your cart is empty!</p>';
-         }
+         
       ?>
-      <p class="grand-total"><span class="name">grand total :</span><span class="price">$<?= $grand_total; ?></span></p>
+      <p class="grand-total"><span class="name">grand total :</span><span class="price">Rs<?= $grand_total; ?></span></p>
       <a href="cart.php" class="btn">veiw cart</a>
    </div>
 
@@ -114,7 +170,7 @@ if(isset($_POST['submit'])){
    <input type="hidden" name="number" value="<?= $fetch_profile['number'] ?>">
    <input type="hidden" name="email" value="<?= $fetch_profile['email'] ?>">
    <input type="hidden" name="address" value="<?= $fetch_profile['address'] ?>">
-
+   <input type="hidden" name="user_id" value="<?= $user_id?>">
    <div class="user-info">
       <h3>your info</h3>
       <p><i class="fas fa-user"></i><span><?= $fetch_profile['name'] ?></span></p>
@@ -126,7 +182,7 @@ if(isset($_POST['submit'])){
       <a href="update_address.php" class="btn">update address</a>
       <select name="method" class="box" required>
          <option value="" disabled selected>select payment method --</option>
-         <option value="cash on delivery">cash on delivery</option>
+         <option value="cash on delivery" selected>cash on delivery</option>
          <option value="credit card">credit card</option>
          <option value="paytm">paytm</option>
          <option value="paypal">paypal</option>

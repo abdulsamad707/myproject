@@ -9,40 +9,83 @@ if(isset($_SESSION['user_id'])){
 }else{
    $user_id = '';
    header('location:home.php');
+   exit;
+   die();
 };
 
 if(isset($_POST['delete'])){
+
    $cart_id = $_POST['cart_id'];
+   $delete_array['cart_id']=$cart_id;
+   $delete_data=json_encode($delete_array);
+   $ch = curl_init();
+curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/delete_cart.php?key=6CU1qSJfcs");
+curl_setopt($ch,CURLOPT_CUSTOMREQUEST,"DELETE" );                                                                                                                 
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $delete_data);
+curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$delete_server_output = curl_exec($ch);
+    
+$delete_server_output= json_decode($delete_server_output,true);
+
+$messagedelete=$delete_server_output['message'];
+
+
+$message[]=$messagedelete;
+
+  /* $cart_id = $_POST['cart_id'];
    $delete_cart_item = $conn->prepare("DELETE FROM `cart` WHERE id = ?");
    $delete_cart_item->execute([$cart_id]);
-   $message[] = 'cart item deleted!';
+   $message[] = 'cart item deleted!';*/
 }
 
 if(isset($_POST['delete_all'])){
-   $delete_cart_item = $conn->prepare("DELETE FROM `cart` WHERE user_id = ?");
-   $delete_cart_item->execute([$user_id]);
+   $ch = curl_init();
+
+         $delete_data["user_id"]=$user_id;
+         $delete_data=json_encode($delete_data);
+   curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/delete_cart.php?key=6CU1qSJfcs");
+   curl_setopt($ch,CURLOPT_CUSTOMREQUEST,"DELETE" );                                                                                                                 
+   curl_setopt($ch, CURLOPT_POST, 1);
+   curl_setopt($ch, CURLOPT_POSTFIELDS, $delete_data);
+   curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+   $delete_server_output = curl_exec($ch);
+     
+   $delete_server_output= json_decode($delete_server_output,true);
+   
+   $messagedelete=$delete_server_output['message'];
+
    // header('location:cart.php');
    $message[] = 'deleted all from cart!';
 }
 
 if(isset($_POST['update_qty'])){
   $update_data['ip_add']= $ipd_add;
-  $qty = $_POST['qty'];
-  $update_data["quantity"]=$qty;
-  /* $cart_id = $_POST['cart_id'];
+  $quantity=$_POST["qty"];
+ 
+  $update_data["quantity"]=$quantity;
+  $pid=$_POST['pid'];
+  $update_data["pid"] =$pid;
+  $update_data["user_id"]=$user_id;
+  $update_data["action"]="update";
+  $update_data=json_encode($update_data);
 
-   $qty = filter_var($qty, FILTER_SANITIZE_STRING);
-   $update_qty = $conn->prepare("UPDATE `cart` SET quantity = ? WHERE id = ?");
-   $update_qty->execute([$qty, $cart_id]);
-   $message[] = 'cart quantity updated';*/
 $ch = curl_init();
-$ip_add=get_client_ip();
-
-
 curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/update_add_cart.php?key=6CU1qSJfcs");
 curl_setopt($ch, CURLOPT_POST, 1);
-$post_data["user_id"] =$user_id;
-}
+curl_setopt($ch, CURLOPT_POSTFIELDS, $update_data);
+curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+$server_output = curl_exec($ch);
+$server_output=json_decode($server_output,true);
+$messageupdate=$server_output['message'];
+
+$message[]=$messageupdate;
+
+
+}                                                   
 
 $grand_total = 0;
 
@@ -91,8 +134,9 @@ $grand_total = 0;
  curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
  curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
  $result=curl_exec($ch);
+ 
  $result=json_decode($result,true);
-
+ 
 
 
          $grand_total = 0;
@@ -106,12 +150,12 @@ $grand_total = 0;
          <img src="uploaded_img/<?= $fetch_cart['product_image']; ?>" alt="">
          <div class="name"><?= $fetch_cart['product_name']; ?></div>
          <div class="flex">
-            <div class="price"><span>$</span><?= $fetch_cart['price']; ?></div>
+            <div class="price"><span>Rs</span><?= $fetch_cart['price']; ?></div>
             <input type="number" name="qty" class="qty" min="1" max="99" value="<?= $fetch_cart['quantity']; ?>" maxlength="2">
               <input type="hidden" name="pid" value="<?php echo $fetch_cart['pid']?>" >
             <button type="submit" class="fas fa-edit" name="update_qty"></button>
          </div>
-         <div class="sub-total"> sub total : <span>$<?= $sub_total = ($fetch_cart['price'] * $fetch_cart['quantity']); ?>/-</span> </div>
+         <div class="sub-total"> sub total : <span>Rs<?= $sub_total = ($fetch_cart['price'] * $fetch_cart['quantity']); ?>/-</span> </div>
       </form>
       <?php
                $grand_total += $sub_total;
@@ -122,7 +166,7 @@ $grand_total = 0;
    </div>
 
    <div class="cart-total">
-      <p>cart total : <span>$<?= $grand_total; ?></span></p>
+      <p>cart total : <span>Rs<?= $grand_total; ?></span></p>
       <a href="checkout.php" class="btn <?= ($grand_total > 1)?'':'disabled'; ?>">proceed to checkout</a>
    </div>
 
