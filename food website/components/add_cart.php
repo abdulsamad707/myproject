@@ -9,10 +9,9 @@ if(isset($_POST['add_to_cart'])){
 
       $user_id = $_SESSION['user_id'];
     
-$ch = curl_init();
+
 $ip_add=get_client_ip();
-curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/update_add_cart.php?key=6CU1qSJfcs");
-curl_setopt($ch, CURLOPT_POST, 1);
+
 
 // Receive server response ...
 
@@ -33,6 +32,9 @@ $post['quantity']=$quantity;
 $price=filter_var($_POST['price'], FILTER_SANITIZE_STRING);
 $post['price']=$price;
 $post=json_encode($post);
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/update_add_cart.php?key=6CU1qSJfcs");
+curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 curl_setopt($ch, CURLOPT_FAILONERROR, true); 
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

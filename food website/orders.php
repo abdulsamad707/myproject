@@ -1,7 +1,7 @@
 <?php
 
 include 'components/connect.php';
-
+include 'components/function.php';
 session_start();
 
 if(isset($_SESSION['user_id'])){
@@ -49,6 +49,22 @@ if(isset($_SESSION['user_id'])){
       if($user_id == ''){
          echo '<p class="empty">please login to see your orders</p>';
       }else{
+          
+         $ch=curl_init();
+         curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/orders.php?key=6CU1qSJfcs&user_id=$user_id");
+         $header[]="Content-Type:applictaion/json";
+         curl_setopt($ch,CURLOPT_POST,false);
+         curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+         curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+         $result_orders=curl_exec($ch);
+         $result_orders=json_decode($result_orders,true);
+         echo"<pre>";
+         print_r($result_orders);
+         echo"<pre>";
+         die();
+   
+      
          $select_orders = $conn->prepare("SELECT * FROM `orders` WHERE user_id = ?");
          $select_orders->execute([$user_id]);
          if($select_orders->rowCount() > 0){

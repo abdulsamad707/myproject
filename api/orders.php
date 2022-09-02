@@ -7,26 +7,16 @@ include("validkey.php");
 ob_start();
 if(!isset($status)){
 
-
-         
+      $user_id=$_GET['user_id'];
+      $order_data_container=  $data->sql("SELECT name,number,email,method,address,total_products,total_price,payment_status,DATE_FORMAT(placed_on,'%d-%M-%Y') as placed_on from orders WHERE user_id='$user_id'",'read');
+       $order_data=$order_data_container;
+         echo json_encode($order_data);
          
          
          
          
   
-  /*  echo "Where condition";
-    echo "<pre>";
-    print_r($whereArray);
-          echo "</pre>";
-        echo "Tables";
-    echo "<pre>";
-    print_r($tables);
-          echo "</pre>";
-                echo "Table Rows";
-    echo "<pre>";
-    print_r($tableRows);
-          echo "</pre>";
-          */
+
           
     
            

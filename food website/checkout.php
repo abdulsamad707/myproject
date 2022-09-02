@@ -42,7 +42,7 @@ if(isset($_POST['submit'])){
    $check_cart = $conn->prepare("SELECT * FROM `cart` WHERE user_id = ?");
    $check_cart->execute([$user_id]);
 
-   if(  $totalCartItem > 0){
+   if($totalCartItem > 0){
 
       if($address == ''){
          $message[] = 'please add your address!';
@@ -51,7 +51,7 @@ if(isset($_POST['submit'])){
          $post_orders=$_POST;
          $post['user_id']=$user_id;
          $post_orders=json_encode($post_orders);
-           $ch = curl_init();
+         $ch = curl_init();
          curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/checkout.php?key=6CU1qSJfcs");
          curl_setopt($ch, CURLOPT_POST, 1);
          curl_setopt($ch, CURLOPT_POSTFIELDS, $post_orders);
@@ -59,32 +59,8 @@ if(isset($_POST['submit'])){
          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
          $server_output_order = curl_exec($ch);
          $server_output_order = json_decode($server_output_order,true);
-       
-           extract($server_output_order);
-     
-          if($code==200){
-            echo $insertId;
-          }
-         die();
-         $ch = curl_init();
-
-         $delete_data["user_id"]=$user_id;
-         $delete_data=json_encode($delete_data);
-   curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/delete_cart.php?key=6CU1qSJfcs");
-   curl_setopt($ch,CURLOPT_CUSTOMREQUEST,"DELETE" );                                                                                                                 
-   curl_setopt($ch, CURLOPT_POST, 1);
-   curl_setopt($ch, CURLOPT_POSTFIELDS, $delete_data);
-   curl_setopt($ch, CURLOPT_FAILONERROR, true); 
-   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-   $delete_server_output = curl_exec($ch);
-      /*   $insert_order = $conn->prepare("INSERT INTO `orders`(user_id, name, number, email, method, address, total_products, total_price) VALUES(?,?,?,?,?,?,?,?)");
-         $insert_order->execute([$user_id, $name, $number, $email, $method, $address, $total_products, $total_price]);
-
-         $delete_cart = $conn->prepare("DELETE FROM `cart` WHERE user_id = ?");
-         $delete_cart->execute([$user_id]);*/
-
-         $message[] = 'order placed successfully!';
-    
+$messages=$server_output_order['message'];
+$message[]=$messages;
       }
       
    }else{
@@ -138,8 +114,7 @@ if(isset($_POST['submit'])){
 
          $grand_total = 0;
          $cart_items[] = '';
-         $select_cart = $conn->prepare("SELECT * FROM `cart` WHERE user_id = ?");
-         $select_cart->execute([$user_id]);
+       
            
          $ch=curl_init();
          curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/carts.php?key=6CU1qSJfcs&user_id=$user_id");
