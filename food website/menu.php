@@ -49,10 +49,20 @@ include 'components/add_cart.php';
    <div class="box-container">
 
       <?php
+
+$ch=curl_init();
+curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/products.php?key=6CU1qSJfcs");
+$header[]="Content-Type:applictaion/json";
+curl_setopt($ch,CURLOPT_POST,false);
+curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+$result=curl_exec($ch);
+$result= json_decode($result,true);
          $select_products = $conn->prepare("SELECT * FROM `products`");
          $select_products->execute();
-         if($select_products->rowCount() > 0){
-            while($fetch_products = $select_products->fetch(PDO::FETCH_ASSOC)){
+   
+         foreach($result['productData']['data'] as  $fetch_products){
       ?>
       <form action="" method="post" class="box">
          <input type="hidden" name="pid" value="<?= $fetch_products['id']; ?>">
@@ -71,9 +81,7 @@ include 'components/add_cart.php';
       </form>
       <?php
             }
-         }else{
-            echo '<p class="empty">no products added yet!</p>';
-         }
+       
       ?>
 
    </div>

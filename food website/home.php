@@ -133,13 +133,9 @@ include 'components/add_cart.php';
  curl_setopt($ch,CURLOPT_POST,false);
  curl_setopt($ch, CURLOPT_FAILONERROR, true); 
  curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-
  curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
-
-
  $result=curl_exec($ch);
-
-$result= json_decode($result,true);
+ $result= json_decode($result,true);
 
 
         

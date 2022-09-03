@@ -1,9 +1,21 @@
 <?php
-class CRUDOPERATION {
+
+
+
+class connectionClass{
+   private $host_name ="localhost";
+   private $dbname="food_db2";
+ private  $username="root";
+  private  $password="";
+
+  
+}
+class CRUDOPERATION extends connectionClass  {
 
 function __construct($host_name,$dbname,$username,$password){
-
+ $pdo=new PDO('mysql:host='.$host_name.';dbname='.$dbname.';',$username,$password);
 $this->host_name=$host_name;
+
 
 $pdo=new PDO('mysql:host='.$host_name.';dbname='.$dbname.';',$username,$password);
 $this->pdo=$pdo;

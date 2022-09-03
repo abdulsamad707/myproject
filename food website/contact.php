@@ -8,6 +8,7 @@ if(isset($_SESSION['user_id'])){
    $user_id = $_SESSION['user_id'];
 }else{
    $user_id = '';
+
 };
 
 if(isset($_POST['send'])){
@@ -20,20 +21,22 @@ if(isset($_POST['send'])){
    $number = filter_var($number, FILTER_SANITIZE_STRING);
    $msg = $_POST['msg'];
    $msg = filter_var($msg, FILTER_SANITIZE_STRING);
+    $post_checkout['msg']=$msg;
+    $post_checkout['name']=$name;
+    $post_checkout['email']=$email;
+    $post_checkout['number']=$number;
+    $post_checkout['user_id']=$user_id;
+   $post_data=json_encode($post_checkout);
+   $ch = curl_init();
+   curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/contact.php?key=6CU1qSJfcs");
+   curl_setopt($ch, CURLOPT_POST, 1);
+   curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+   curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+   $server_output_order = curl_exec($ch);
+   $messages=$server_output_order['message'];
+   $message[]=$messages;
 
-   $select_message = $conn->prepare("SELECT * FROM `messages` WHERE name = ? AND email = ? AND number = ? AND message = ?");
-   $select_message->execute([$name, $email, $number, $msg]);
-
-   if($select_message->rowCount() > 0){
-      $message[] = 'already sent message!';
-   }else{
-
-      $insert_message = $conn->prepare("INSERT INTO `messages`(user_id, name, email, number, message) VALUES(?,?,?,?,?)");
-      $insert_message->execute([$user_id, $name, $email, $number, $msg]);
-
-      $message[] = 'sent message successfully!';
-
-   }
 
 }
 

@@ -18,9 +18,9 @@ if(isset($_POST['submit'])){
    $email = filter_var($email, FILTER_SANITIZE_STRING);
    $number = $_POST['number'];
    $number = filter_var($number, FILTER_SANITIZE_STRING);
-   $pass = sha1($_POST['pass']);
+   $pass=$_POST['pass'];
    $pass = filter_var($pass, FILTER_SANITIZE_STRING);
-   $cpass = sha1($_POST['cpass']);
+   $cpass =$_POST['cpass'];
    $cpass = filter_var($cpass, FILTER_SANITIZE_STRING);
 
    $select_user = $conn->prepare("SELECT * FROM `users` WHERE email = ? OR number = ?");
@@ -33,15 +33,20 @@ if(isset($_POST['submit'])){
       if($pass != $cpass){
          $message[] = 'confirm password not matched!';
       }else{
+              $pass=md5($pass);
+              $pass=sha1($pass);
+          $pass=password_hash($pass,PASSWORD_BCRYPT,["cost"=>12]);
+           $register_array['name']=$name;
+           $register_array['email']=$email;
+           $register_array['number']=$number;
+           $register_array['pass']=$pass;
          $insert_user = $conn->prepare("INSERT INTO `users`(name, email, number, password) VALUES(?,?,?,?)");
-         $insert_user->execute([$name, $email, $number, $cpass]);
-         $select_user = $conn->prepare("SELECT * FROM `users` WHERE email = ? AND password = ?");
-         $select_user->execute([$email, $pass]);
+         $insert_user->execute([$name, $email, $number, $pass]);
+         $select_user = $conn->prepare("SELECT * FROM `users` WHERE email = ?");
+         $select_user->execute([$email]);
          $row = $select_user->fetch(PDO::FETCH_ASSOC);
-         if($select_user->rowCount() > 0){
-            $_SESSION['user_id'] = $row['id'];
-            header('location:home.php');
-         }
+         $message[] = 'Register Successfully';
+         
       }
    }
 

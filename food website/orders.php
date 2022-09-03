@@ -59,16 +59,16 @@ if(isset($_SESSION['user_id'])){
          curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
          $result_orders=curl_exec($ch);
          $result_orders=json_decode($result_orders,true);
-         echo"<pre>";
-         print_r($result_orders);
-         echo"<pre>";
-         die();
+         $totalOrder=$result_orders['totalRecord'];
+   
+
+      
    
       
          $select_orders = $conn->prepare("SELECT * FROM `orders` WHERE user_id = ?");
          $select_orders->execute([$user_id]);
-         if($select_orders->rowCount() > 0){
-            while($fetch_orders = $select_orders->fetch(PDO::FETCH_ASSOC)){
+         if($totalOrder >0){
+            foreach($result_orders['data'] as $fetch_orders){
    ?>
    <div class="box">
       <p>placed on : <span><?= $fetch_orders['placed_on']; ?></span></p>

@@ -14,16 +14,47 @@ if(isset($_POST['submit'])){
 
    $email = $_POST['email'];
    $email = filter_var($email, FILTER_SANITIZE_STRING);
-   $pass = sha1($_POST['pass']);
+    $pass = $_POST['pass'];
+    $pass=md5($pass);
+    $pass=sha1($pass);
    $pass = filter_var($pass, FILTER_SANITIZE_STRING);
+  $login_array['email']=$email;
+  $login_array['password']=$pass;
 
-   $select_user = $conn->prepare("SELECT * FROM `users` WHERE email = ? AND password = ?");
-   $select_user->execute([$email, $pass]);
+  $post_data=json_encode($login_array);
+  $ch = curl_init();
+   
+  curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/login_api.php?key=6CU1qSJfcs");
+  curl_setopt($ch, CURLOPT_POST, 1);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+  curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  
+  $server_output_login=json_decode(curl_exec($ch),true);
+
+  die();
+/*
+   
+  $messages=$server_output_order['message'];
+  $message[]=$messages;
+  */
+   $select_user = $conn->prepare("SELECT * FROM `users` WHERE email = ?");
+   $select_user->execute([$email]);
    $row = $select_user->fetch(PDO::FETCH_ASSOC);
 
    if($select_user->rowCount() > 0){
-      $_SESSION['user_id'] = $row['id'];
-      header('location:home.php');
+      $pass=md5($pass);
+      $pass=sha1($pass);
+     if(password_verify($pass,$row['password'])){
+         $_SESSION['user_id'] = $row['id'];
+         $_SESSION['email'] = $row['email'];
+         header('location:home.php');
+      }else{
+         $message[] = 'incorrect  password!';
+      }
+   
+
+   
    }else{
       $message[] = 'incorrect username or password!';
    }
