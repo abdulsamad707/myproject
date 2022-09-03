@@ -29,35 +29,21 @@ if(isset($_POST['submit'])){
   curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
   curl_setopt($ch, CURLOPT_FAILONERROR, true); 
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  
+ 
   $server_output_login=json_decode(curl_exec($ch),true);
+  $id= $server_output_login['id'];
+  $status= $server_output_login['status'];
+  if($status==1){
+  $_SESSION['user_id'] = $id;
+  $_SESSION['email'] = $email;
+  header('location:home.php');
+  }else{
+   $messages=$server_output_login['message'];
+   $message[]=$messages;
+  }
+ 
 
-  die();
-/*
-   
-  $messages=$server_output_order['message'];
-  $message[]=$messages;
-  */
-   $select_user = $conn->prepare("SELECT * FROM `users` WHERE email = ?");
-   $select_user->execute([$email]);
-   $row = $select_user->fetch(PDO::FETCH_ASSOC);
 
-   if($select_user->rowCount() > 0){
-      $pass=md5($pass);
-      $pass=sha1($pass);
-     if(password_verify($pass,$row['password'])){
-         $_SESSION['user_id'] = $row['id'];
-         $_SESSION['email'] = $row['email'];
-         header('location:home.php');
-      }else{
-         $message[] = 'incorrect  password!';
-      }
-   
-
-   
-   }else{
-      $message[] = 'incorrect username or password!';
-   }
 
 }
 
