@@ -19,12 +19,35 @@ if(isset($_POST['add_product'])){
    $category = $_POST['category'];
    $category = filter_var($category, FILTER_SANITIZE_STRING);
 
+
    $image = $_FILES['image']['name'];
    $image = filter_var($image, FILTER_SANITIZE_STRING);
    $image_size = $_FILES['image']['size'];
-   $image_tmp_name = $_FILES['image']['tmp_name'];
+   echo $image_tmp_name = $_FILES['image']['tmp_name'];
+   $image_type= $_FILES['image']['type'];
    $image_folder = '../uploaded_img/'.$image;
+   $cf = new CURLFile($image_tmp_name,$image_type,$image);
+   print_r($cf);
+  $dataProduct=$_POST;
+  $file=$_FILES;
+  $ch=curl_init();
+  $file_data=array("file"=>$cf,"productName"=>$name,'price'=>$price,'category'=>$category);
+   $file_data=json_encode($file_data);
+ 
+/*
 
+  */
+  curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/product_add.php?key=6CU1qSJfcs");
+
+  curl_setopt($ch, CURLOPT_POST, 1);
+
+  $header=array('Content-Type:multipart/form-data');
+  curl_setopt($ch,CURLOPT_HTTPHEADER,$header);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, $file_data);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  $server_product_add=curl_exec($ch);
+print_r($server_product_add);
+  die();
    $select_products = $conn->prepare("SELECT * FROM `products` WHERE name = ?");
    $select_products->execute([$name]);
 
@@ -112,15 +135,25 @@ if(isset($_GET['delete'])){
    <div class="box-container">
 
    <?php
-      $show_products = $conn->prepare("SELECT * FROM `products`");
-      $show_products->execute();
-      if($show_products->rowCount() > 0){
-         while($fetch_products = $show_products->fetch(PDO::FETCH_ASSOC)){  
+ $ch=curl_init();
+ curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/products.php?key=6CU1qSJfcs");
+ $header[]="Content-Type:applictaion/json";
+ curl_setopt($ch,CURLOPT_POST,false);
+ curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+ curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+ curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+ $result=curl_exec($ch);
+ $result= json_decode($result,true);
+ 
+
+   
+      if($result['productData']['totalRecord'] > 0){
+         foreach($result['productData']['data'] as $fetch_products){  
    ?>
    <div class="box">
       <img src="../uploaded_img/<?= $fetch_products['image']; ?>" alt="">
       <div class="flex">
-         <div class="price"><span>$</span><?= $fetch_products['price']; ?><span>/-</span></div>
+         <div class="price"><span>Rs </span><?= $fetch_products['price']; ?><span>/-</span></div>
          <div class="category"><?= $fetch_products['category']; ?></div>
       </div>
       <div class="name"><?= $fetch_products['name']; ?></div>
