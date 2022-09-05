@@ -19,8 +19,7 @@ if(!isset($status)){
  
 
 
-   $ext= pathinfo($fileName,PATHINFO_EXTENSION);
-   $file=rand().".".$ext;
+
 
     $productData=$_POST;
     extract($_POST);
@@ -34,6 +33,8 @@ if(!isset($status)){
     $fileName= $_FILES['file']['name'];
     $fileSize= $_FILES['file']['size'];
     $tmpName=$_FILES['file']['tmp_name'];
+    $ext= pathinfo($fileName,PATHINFO_EXTENSION);
+    $file=rand().".".$ext;
 
        $totalProduct=$sql_check_product_data['totalRecord'];
        if($totalProduct < 1){
@@ -49,6 +50,7 @@ if(!isset($status)){
         $insertProduct['message']="Product Already Exists";
            }else{
            print_r($sql_check_product_data);
+           
                 die();
              if(!empty( $fileName)){
               move_uploaded_file($tmpName,'productImage/'.$file);

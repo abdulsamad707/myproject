@@ -31,26 +31,45 @@ if(isset($_POST['update'])){
    curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
    $result=curl_exec($ch);
    print_r($result);
+print_r($_FILES);
+  echo  $image_name = $_FILES['image']['name'];
+
+   $image_size = $_FILES['image']['size'];
+   $image_tmp_name = $_FILES['image']['tmp_name'];
+      die();
+   $image_folder = '../uploaded_img/'.$image_name;
+   $cf = new CURLFile($image_tmp_name,$image_type,$image_name);
      die();
    $message[] = 'product updated!';
 
  
-   $image = $_FILES['image']['name'];
-   $cf = new CURLFile($image_tmp_name,$image_type,$image_name);
-   $image_size = $_FILES['image']['size'];
-   $image_tmp_name = $_FILES['image']['tmp_name'];
-   $image_folder = '../uploaded_img/'.$image;
 
+   
+
+   
+   /*
    if(!empty($image)){
       if($image_size > 2000000){
          $message[] = 'images size is too large!';
       }else{
-      
+         $ch2=curl_init();
+         $file_data=array("file"=>$cf,"productName"=>$name,'price'=>$price,'category'=>$category,"action"=>"add");
+       
+        
+     
+         curl_setopt($ch2, CURLOPT_URL,"http://localhost/project/api/product_add.php?key=6CU1qSJfcs");
+       
+         curl_setopt($ch2, CURLOPT_POST, 1);
+       
+         $header=array('Content-Type:multipart/form-data'); 
+       curl_setopt($ch,CURLOPT_HTTPHEADER,$header);
+         curl_setopt($ch2, CURLOPT_POSTFIELDS, $file_data);
+         curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
     
          $message[] = 'image updated!';
       }
-   }
-
+   }*/
+   
 }
 
 ?>
