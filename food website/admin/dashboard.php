@@ -7,7 +7,7 @@ session_start();
 $admin_id = $_SESSION['admin_id'];
 
 if(!isset($admin_id)){
-   header('location:admin_login.php');
+   header('location:admin_login');
 }
 
 ?>
@@ -42,7 +42,7 @@ if(!isset($admin_id)){
    <div class="box">
       <h3>welcome!</h3>
       <p><?= $fetch_profile['name']; ?></p>
-      <a href="update_profile.php" class="btn">update profile</a>
+      <a href="update_profile" class="btn">update profile</a>
    </div>
 
    <div class="box">
@@ -54,9 +54,9 @@ if(!isset($admin_id)){
             $total_pendings += $fetch_pendings['total_price'];
          }
       ?>
-      <h3><span>$</span><?= $total_pendings; ?><span>/-</span></h3>
+      <h3><span>Rs</span><?= $total_pendings; ?><span>/-</span></h3>
       <p>total pendings</p>
-      <a href="placed_orders.php" class="btn">see orders</a>
+      <a href="placed_orders" class="btn">see orders</a>
    </div>
 
    <div class="box">
@@ -68,9 +68,9 @@ if(!isset($admin_id)){
             $total_completes += $fetch_completes['total_price'];
          }
       ?>
-      <h3><span>$</span><?= $total_completes; ?><span>/-</span></h3>
+      <h3><span>Rs</span><?= $total_completes; ?><span>/-</span></h3>
       <p>total completes</p>
-      <a href="placed_orders.php" class="btn">see orders</a>
+      <a href="placed_orders" class="btn">see orders</a>
    </div>
 
    <div class="box">
@@ -81,7 +81,7 @@ if(!isset($admin_id)){
       ?>
       <h3><?= $numbers_of_orders; ?></h3>
       <p>total orders</p>
-      <a href="placed_orders.php" class="btn">see orders</a>
+      <a href="placed_orders" class="btn">see orders</a>
    </div>
 
    <div class="box">
@@ -92,7 +92,7 @@ if(!isset($admin_id)){
       ?>
       <h3><?= $numbers_of_products; ?></h3>
       <p>products added</p>
-      <a href="products.php" class="btn">see products</a>
+      <a href="products" class="btn">see products</a>
    </div>
 
    <div class="box">
@@ -103,7 +103,7 @@ if(!isset($admin_id)){
       ?>
       <h3><?= $numbers_of_users; ?></h3>
       <p>users accounts</p>
-      <a href="users_accounts.php" class="btn">see users</a>
+      <a href="users_accounts" class="btn">see users</a>
    </div>
 
    <div class="box">
@@ -114,7 +114,7 @@ if(!isset($admin_id)){
       ?>
       <h3><?= $numbers_of_admins; ?></h3>
       <p>admins</p>
-      <a href="admin_accounts.php" class="btn">see admins</a>
+      <a href="admin_accounts" class="btn">see admins</a>
    </div>
 
    <div class="box">
@@ -125,7 +125,7 @@ if(!isset($admin_id)){
       ?>
       <h3><?= $numbers_of_messages; ?></h3>
       <p>new messages</p>
-      <a href="messages.php" class="btn">see messages</a>
+      <a href="messages" class="btn">see messages</a>
    </div>
 
    </div>

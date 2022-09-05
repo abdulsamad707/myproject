@@ -41,28 +41,37 @@ include 'components/add_cart.php';
       $pid = $_GET['pid'];
       $select_products = $conn->prepare("SELECT * FROM `products` WHERE id = ?");
       $select_products->execute([$pid]);
-      if($select_products->rowCount() > 0){
-         while($fetch_products = $select_products->fetch(PDO::FETCH_ASSOC)){
+      $ch=curl_init();
+      curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/productsDetail.php?key=6CU1qSJfcs&productId=$pid");
+      $header[]="Content-Type:applictaion/json";
+      curl_setopt($ch,CURLOPT_POST,false);
+      curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+      curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+      curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+      $result=curl_exec($ch);
+      $result= json_decode($result,true);
+
+         foreach($result['data'] as $fetch_products ){
+            $product_image_path=PRODUCT_IMAGE_PATH."/".$fetch_products['image'];
+            $product_status=$fetch_products['productStatus'];
    ?>
    <form action="" method="post" class="box">
       <input type="hidden" name="pid" value="<?= $fetch_products['id']; ?>">
       <input type="hidden" name="name" value="<?= $fetch_products['name']; ?>">
       <input type="hidden" name="price" value="<?= $fetch_products['price']; ?>">
       <input type="hidden" name="image" value="<?= $fetch_products['image']; ?>">
-      <img src="uploaded_img/<?= $fetch_products['image']; ?>" alt="">
+      <img src="<?= $product_image_path; ?>" alt="">
       <a href="category.php?category=<?= $fetch_products['category']; ?>" class="cat"><?= $fetch_products['category']; ?></a>
       <div class="name"><?= $fetch_products['name']; ?></div>
       <div class="flex">
-         <div class="price"><span>$</span><?= $fetch_products['price']; ?></div>
+         <div class="price"><span>Rs</span><?= $fetch_products['price']; ?></div>
          <input type="number" name="qty" class="qty" min="1" max="99" value="1" maxlength="2">
       </div>
       <button type="submit" name="add_to_cart" class="cart-btn">add to cart</button>
    </form>
    <?php
          }
-      }else{
-         echo '<p class="empty">no products added yet!</p>';
-      }
+      
    ?>
 
 </section>

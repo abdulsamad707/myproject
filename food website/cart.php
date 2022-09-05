@@ -8,7 +8,7 @@ if(isset($_SESSION['user_id'])){
    $user_id = $_SESSION['user_id'];
 }else{
    $user_id = '';
-   header('location:home.php');
+   header('location:home');
    exit;
    die();
 };
@@ -160,6 +160,10 @@ $grand_total = 0;
       <?php
                $grand_total += $sub_total;
             }
+            if($grand_total < 0){
+               header('location:home');
+               die();
+            }
          
       ?>
 
@@ -167,14 +171,14 @@ $grand_total = 0;
 
    <div class="cart-total">
       <p>cart total : <span>Rs<?= $grand_total; ?></span></p>
-      <a href="checkout.php" class="btn <?= ($grand_total > 1)?'':'disabled'; ?>">proceed to checkout</a>
+      <a href="checkout" class="btn <?= ($grand_total > 1)?'':'disabled'; ?>">proceed to checkout</a>
    </div>
 
    <div class="more-btn">
       <form action="" method="post">
          <button type="submit" class="delete-btn <?= ($grand_total > 1)?'':'disabled'; ?>" name="delete_all" onclick="return confirm('delete all from cart?');">delete all</button>
       </form>
-      <a href="menu.php" class="btn">continue shopping</a>
+      <a href="menu" class="btn">continue shopping</a>
    </div>
 
 </section>

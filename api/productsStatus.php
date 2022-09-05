@@ -11,9 +11,13 @@ if (!isset($status))
    $conn=$data->getConnection();
     $userdata=file_get_contents("php://input");
 
+   $userdata=json_decode($userdata,true);
 
-    print_r($userdata);
-
+    extract($userdata);
+    $update_sql="UPDATE products SET productStatus='$status_action' WHERE id='$product_id'";
+  $productUpdateStatus=  $data->sql($update_sql,"update");
+    $productUpdateStatus['message']="Product Status Change";
+     echo json_encode($productUpdateStatus);
 }
 
 ?>

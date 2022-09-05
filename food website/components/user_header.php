@@ -18,11 +18,11 @@ if(isset($message)){
       <a href="home.php" class="logo">FOOD POINT😋</a>
 
       <nav class="navbar">
-         <a href="home.php">home</a>
-         <a href="about.php">about</a>
-         <a href="menu.php">menu</a>
-         <a href="orders.php">orders</a>
-         <a href="contact.php">contact</a>
+         <a href="home">home</a>
+         <a href="about">about</a>
+         <a href="menu">menu</a>
+         <a href="orders">orders</a>
+         <a href="contact">contact</a>
       </nav>
 
       <div class="icons">
@@ -31,8 +31,8 @@ if(isset($message)){
             $count_cart_items->execute([$user_id]);
             $total_cart_items = $count_cart_items->rowCount();
          ?>
-         <a href="search.php"><i class="fas fa-search"></i></a>
-         <a href="cart.php"><i class="fas fa-shopping-cart"></i><span>(<?= $total_cart_items; ?>)</span></a>
+         <a href="search"><i class="fas fa-search"></i></a>
+         <a href="cart" class="fas fa-shopping-cart"></i><span>(<?= $total_cart_items; ?>)</span></a>
          <div id="user-btn" class="fas fa-user"></div>
          <div id="menu-btn" class="fas fa-bars"></div>
       </div>
@@ -46,18 +46,18 @@ if(isset($message)){
          ?>
          <p class="name"><?= $fetch_profile['name']; ?></p>
          <div class="flex">
-            <a href="profile.php" class="btn">profile</a>
-            <a href="components/user_logout.php" onclick="return confirm('logout from this website?');" class="delete-btn">logout</a>
+            <a href="profile" class="btn">profile</a>
+            <a href="components/user_logout" onclick="return confirm('logout from this website?');" class="delete-btn">logout</a>
          </div>
          <p class="account">
-            <a href="login.php">login</a> or
-            <a href="register.php">register</a>
+            <a href="login">login</a> or
+            <a href="register">register</a>
          </p> 
          <?php
             }else{
          ?>
             <p class="name">please login first!</p>
-            <a href="login.php" class="btn">login</a>
+            <a href="login" class="btn">login</a>
          <?php
           }
          ?>

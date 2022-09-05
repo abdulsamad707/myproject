@@ -36,7 +36,7 @@ if(isset($_POST['submit'])){
   if($status==1){
   $_SESSION['user_id'] = $id;
   $_SESSION['email'] = $email;
-  header('location:home.php');
+  header('location:home');
   }else{
    $messages=$server_output_login['message'];
    $message[]=$messages;

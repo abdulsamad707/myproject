@@ -21,14 +21,22 @@ if(isset($_POST['update'])){
    $category = $_POST['category'];
    $category = filter_var($category, FILTER_SANITIZE_STRING);
 
-   $update_product = $conn->prepare("UPDATE `products` SET name = ?, category = ?, price = ? WHERE id = ?");
-   $update_product->execute([$name, $category, $price, $pid]);
 
+   $ch=curl_init();
+   curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/productsDetail.php?key=6CU1qSJfcs&productId=$pid");
+   $header[]="Content-Type:applictaion/json";
+   curl_setopt($ch,CURLOPT_POST,false);
+   curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+   curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+   curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+   $result=curl_exec($ch);
+   print_r($result);
+     die();
    $message[] = 'product updated!';
 
-   $old_image = $_POST['old_image'];
+ 
    $image = $_FILES['image']['name'];
-   $image = filter_var($image, FILTER_SANITIZE_STRING);
+   $cf = new CURLFile($image_tmp_name,$image_type,$image_name);
    $image_size = $_FILES['image']['size'];
    $image_tmp_name = $_FILES['image']['tmp_name'];
    $image_folder = '../uploaded_img/'.$image;
@@ -37,10 +45,8 @@ if(isset($_POST['update'])){
       if($image_size > 2000000){
          $message[] = 'images size is too large!';
       }else{
-         $update_image = $conn->prepare("UPDATE `products` SET image = ? WHERE id = ?");
-         $update_image->execute([$image, $pid]);
-         move_uploaded_file($image_tmp_name, $image_folder);
-         unlink('../uploaded_img/'.$old_image);
+      
+    
          $message[] = 'image updated!';
       }
    }
@@ -75,16 +81,26 @@ if(isset($_POST['update'])){
    <h1 class="heading">update product</h1>
 
    <?php
-      $update_id = $_GET['update'];
-      $show_products = $conn->prepare("SELECT * FROM `products` WHERE id = ?");
-      $show_products->execute([$update_id]);
-      if($show_products->rowCount() > 0){
-         while($fetch_products = $show_products->fetch(PDO::FETCH_ASSOC)){  
+      $pid = $_GET['update'];
+     
+     
+      $ch=curl_init();
+      curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/productsDetail.php?key=6CU1qSJfcs&productId=$pid");
+      $header[]="Content-Type:applictaion/json";
+      curl_setopt($ch,CURLOPT_POST,false);
+      curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+      curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+      curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+      $result=curl_exec($ch);
+      $result= json_decode($result,true);
+    
+         foreach($result['data'] as $fetch_products){  
+            $image_Path= PRODUCT_IMAGE_PATH."/".$fetch_products['image'];
    ?>
    <form action="" method="POST" enctype="multipart/form-data">
       <input type="hidden" name="pid" value="<?= $fetch_products['id']; ?>">
       <input type="hidden" name="old_image" value="<?= $fetch_products['image']; ?>">
-      <img src="../uploaded_img/<?= $fetch_products['image']; ?>" alt="">
+      <img src="<?=    $image_Path ; ?>" alt="">
       <span>update name</span>
       <input type="text" required placeholder="enter product name" name="name" maxlength="100" class="box" value="<?= $fetch_products['name']; ?>">
       <span>update price</span>
@@ -106,9 +122,7 @@ if(isset($_POST['update'])){
    </form>
    <?php
          }
-      }else{
-         echo '<p class="empty">no products added yet!</p>';
-      }
+      
    ?>
 
 </section>

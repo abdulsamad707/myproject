@@ -7,7 +7,7 @@ session_start();
 $admin_id = $_SESSION['admin_id'];
 
 if(!isset($admin_id)){
-   header('location:admin_login.php');
+   header('location:admin_login');
 };
 
 if(isset($_POST['add_product'])){
@@ -31,7 +31,7 @@ if(isset($_POST['add_product'])){
   $dataProduct=$_POST;
   $file=$_FILES;
   $ch=curl_init();
-  $file_data=array("file"=>$cf,"productName"=>$name,'price'=>$price,'category'=>$category);
+  $file_data=array("file"=>$cf,"productName"=>$name,'price'=>$price,'category'=>$category,"action"=>"add");
 
  
 /*
@@ -55,10 +55,10 @@ if(isset($_POST['add_product'])){
       if($image_size > 2000000){
          $message[] = 'image size is too large';
       }else{
-   
-         $server_product_add=json_decode(curl_exec($ch),true);
+       
 
-        
+         $server_product_add=curl_exec($ch);
+         $server_product_add=json_decode($server_product_add,true);
          $messages=$server_product_add['message'];
          $message[]=$messages;
       }
@@ -81,7 +81,7 @@ if(isset($_GET['update_status'])){
    curl_setopt($ch, CURLOPT_POSTFIELDS, $product_data);
    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
    $server_product_add=curl_exec($ch);
-   print_r($server_product_add);
+  
 /*
    $delete_product_image = $conn->prepare("SELECT * FROM `products` WHERE id = ?");
    $delete_product_image->execute([$delete_id]);
@@ -93,9 +93,9 @@ if(isset($_GET['update_status'])){
    $delete_cart->execute([$delete_id]);*/
        
    
-die();
+
      
-   header('location:products.php');
+   header('location:products');
 
 }
 
@@ -175,7 +175,7 @@ die();
       </div>
       <div class="name"><?= $fetch_products['name']; ?></div>
       <div class="flex-btn">
-         <a href="update_product.php?update=<?= $fetch_products['id']; ?>" class="option-btn">update</a>
+         <a href="update_product?update=<?= $fetch_products['id']; ?>" class="option-btn">update</a>
 
 
          <?php

@@ -18,12 +18,12 @@ if(isset($message)){
       <a href="dashboard.php" class="logo">Admin<span>Panel</span></a>
 
       <nav class="navbar">
-         <a href="dashboard.php">home</a>
-         <a href="products.php">products</a>
-         <a href="placed_orders.php">orders</a>
-         <a href="admin_accounts.php">admins</a>
-         <a href="users_accounts.php">users</a>
-         <a href="messages.php">messages</a>
+         <a href="dashboard">home</a>
+         <a href="products">products</a>
+         <a href="placed_orders">orders</a>
+         <a href="admin_accounts">admins</a>
+         <a href="users_accounts">users</a>
+         <a href="messages">messages</a>
       </nav>
 
       <div class="icons">
@@ -40,10 +40,10 @@ if(isset($message)){
          <p><?= $fetch_profile['name']; ?></p>
          <a href="update_profile.php" class="btn">update profile</a>
          <div class="flex-btn">
-            <a href="admin_login.php" class="option-btn">login</a>
-            <a href="register_admin.php" class="option-btn">register</a>
+            <a href="admin_login" class="option-btn">login</a>
+            <a href="register_admin" class="option-btn">register</a>
          </div>
-         <a href="../components/admin_logout.php" onclick="return confirm('logout from this website?');" class="delete-btn">logout</a>
+         <a href="../components/admin_logout" onclick="return confirm('logout from this website?');" class="delete-btn">logout</a>
       </div>
 
    </section>
