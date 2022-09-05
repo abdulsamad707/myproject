@@ -25,9 +25,9 @@ $productSearch= rtrim($productSearch,'/');
 $productSearch= ltrim($productSearch,'/');
 $productSearch= rtrim($productSearch,'/');
  $productSearch= rtrim($productSearch," ");
-   $sql="SELECT * FROM products WHERE 	productStatus=1 AND productKeyWord like '%$productSearch%' or soundex('$productSearch')=soundex(productKeyWord)";
+   $sql="SELECT * FROM products WHERE  productKeyWord like '%$productSearch%' or soundex('$productSearch')=soundex(productKeyWord)";
    }else{
-    $sql="SELECT * FROM products WHERE 	productStatus=1 ";   
+    $sql="SELECT * FROM products  ";   
    }
 
 $productdatas=$data->sql($sql,'read');

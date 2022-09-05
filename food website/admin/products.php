@@ -20,19 +20,19 @@ if(isset($_POST['add_product'])){
    $category = filter_var($category, FILTER_SANITIZE_STRING);
 
 
-   $image = $_FILES['image']['name'];
-   $image = filter_var($image, FILTER_SANITIZE_STRING);
+   $image_name= $_FILES['image']['name'];
+
    $image_size = $_FILES['image']['size'];
-   echo $image_tmp_name = $_FILES['image']['tmp_name'];
+    $image_tmp_name = $_FILES['image']['tmp_name'];
    $image_type= $_FILES['image']['type'];
-   $image_folder = '../uploaded_img/'.$image;
-   $cf = new CURLFile($image_tmp_name,$image_type,$image);
-   print_r($cf);
+   $image_folder = '../uploaded_img/'.$image_name;
+   $cf = new CURLFile($image_tmp_name,$image_type,$image_name);
+
   $dataProduct=$_POST;
   $file=$_FILES;
   $ch=curl_init();
   $file_data=array("file"=>$cf,"productName"=>$name,'price'=>$price,'category'=>$category);
-   $file_data=json_encode($file_data);
+
  
 /*
 
@@ -41,37 +41,43 @@ if(isset($_POST['add_product'])){
 
   curl_setopt($ch, CURLOPT_POST, 1);
 
-  $header=array('Content-Type:multipart/form-data');
-  curl_setopt($ch,CURLOPT_HTTPHEADER,$header);
+  $header=array('Content-Type:multipart/form-data'); 
+ /* curl_setopt($ch,CURLOPT_HTTPHEADER,$header);*/
   curl_setopt($ch, CURLOPT_POSTFIELDS, $file_data);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-  $server_product_add=curl_exec($ch);
-print_r($server_product_add);
-  die();
-   $select_products = $conn->prepare("SELECT * FROM `products` WHERE name = ?");
-   $select_products->execute([$name]);
 
-   if($select_products->rowCount() > 0){
-      $message[] = 'product name already exists!';
-   }else{
+
+  
+
+
+  
+
       if($image_size > 2000000){
          $message[] = 'image size is too large';
       }else{
-         move_uploaded_file($image_tmp_name, $image_folder);
+   
+         $server_product_add=json_decode(curl_exec($ch),true);
 
-         $insert_product = $conn->prepare("INSERT INTO `products`(name, category, price, image) VALUES(?,?,?,?)");
-         $insert_product->execute([$name, $category, $price, $image]);
-
-         $message[] = 'new product added!';
+        
+         $messages=$server_product_add['message'];
+         $message[]=$messages;
       }
 
-   }
+   
 
 }
 
 if(isset($_GET['delete'])){
 
-   $delete_id = $_GET['delete'];
+   $delete_id = $_GET['update_status'];
+   
+   curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/productsDetail.php?key=6CU1qSJfcs");
+
+   curl_setopt($ch, CURLOPT_POST, 1);
+     $product_data['product_id']=$_GET['update_status'];
+   curl_setopt($ch, CURLOPT_POSTFIELDS, $product_data);
+   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+   /*$server_product_add=json_decode(curl_exec($ch),true);
    $delete_product_image = $conn->prepare("SELECT * FROM `products` WHERE id = ?");
    $delete_product_image->execute([$delete_id]);
    $fetch_delete_image = $delete_product_image->fetch(PDO::FETCH_ASSOC);
@@ -79,7 +85,8 @@ if(isset($_GET['delete'])){
    $delete_product = $conn->prepare("DELETE FROM `products` WHERE id = ?");
    $delete_product->execute([$delete_id]);
    $delete_cart = $conn->prepare("DELETE FROM `cart` WHERE pid = ?");
-   $delete_cart->execute([$delete_id]);
+   $delete_cart->execute([$delete_id]);*/
+   
    header('location:products.php');
 
 }
@@ -98,7 +105,7 @@ if(isset($_GET['delete'])){
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 
    <!-- custom css file link  -->
-   <link rel="stylesheet" href="../css/admin_style.css">
+   <link rel="stylesheet" href="../css/admin_style.css?v=34">
 
 </head>
 <body>
@@ -149,9 +156,11 @@ if(isset($_GET['delete'])){
    
       if($result['productData']['totalRecord'] > 0){
          foreach($result['productData']['data'] as $fetch_products){  
+
+           $image_Path= PRODUCT_IMAGE_PATH."/".$fetch_products['image'];
    ?>
    <div class="box">
-      <img src="../uploaded_img/<?= $fetch_products['image']; ?>" alt="">
+      <img src="<?=$image_Path; ?>" alt="">
       <div class="flex">
          <div class="price"><span>Rs </span><?= $fetch_products['price']; ?><span>/-</span></div>
          <div class="category"><?= $fetch_products['category']; ?></div>
@@ -159,7 +168,20 @@ if(isset($_GET['delete'])){
       <div class="name"><?= $fetch_products['name']; ?></div>
       <div class="flex-btn">
          <a href="update_product.php?update=<?= $fetch_products['id']; ?>" class="option-btn">update</a>
-         <a href="products.php?delete=<?= $fetch_products['id']; ?>" class="delete-btn" onclick="return confirm('delete this product?');">delete</a>
+
+
+         <?php
+     echo    $statusProduct= $fetch_products['productStatus'];
+              if($statusProduct!=1){
+              $btnClass= "delete-btn";
+              $btnClassAct="Inactive";
+              }else{
+               $btnClass= "active-btn";
+               $btnClassAct="Active";
+              }
+           ?>
+         
+         <a href="products.php?update_status=<?= $fetch_products['id']; ?>" class="<?=$btnClass; ?>" onclick="return confirm('update the statius of product?');"><?= $btnClassAct;?></a>
       </div>
    </div>
    <?php

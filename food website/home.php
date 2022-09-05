@@ -14,9 +14,10 @@ include 'components/add_cart.php';
 
 
 
+
  
 ?>
-
+ 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -142,7 +143,10 @@ include 'components/add_cart.php';
    
 
            foreach($result['productData']['data'] as  $fetch_products){
-         
+       
+         $product_image_path=PRODUCT_IMAGE_PATH."/".$fetch_products['image'];
+         $product_status=$fetch_products['productStatus'];
+         if($product_status==1){
       ?>
       <form action="" method="post" class="box">
          <input type="hidden" name="pid" value="<?= $fetch_products['id']; ?>">
@@ -151,7 +155,7 @@ include 'components/add_cart.php';
          <input type="hidden" name="image" value="<?= $fetch_products['image']; ?>">
          <a href="quick_view.php?pid=<?= $fetch_products['id']; ?>" class="fas fa-eye"></a>
          <button type="submit" class="fas fa-shopping-cart" name="add_to_cart"></button>
-         <img src="uploaded_img/<?= $fetch_products['image']; ?>" alt="">
+         <img src="<?= $product_image_path ?>" alt="">
          <a href="category.php?category=<?= $fetch_products['category']; ?>" class="cat"><?= $fetch_products['category']; ?></a>
          <div class="name"><?= $fetch_products['name']; ?></div>
          <div class="flex">
@@ -160,7 +164,7 @@ include 'components/add_cart.php';
          </div>
       </form>
       <?php
-      
+         }
             }
          
       ?>

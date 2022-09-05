@@ -141,13 +141,13 @@ $grand_total = 0;
 
          $grand_total = 0;
         foreach($result["data"] as $fetch_cart){
-         
+         $product_image_path=PRODUCT_IMAGE_PATH."/".$fetch_cart['product_image'];
       ?>
       <form action="" method="post" class="box">
          <input type="hidden" name="cart_id" value="<?= $fetch_cart['cart_id']; ?>">
          <a href="quick_view.php?pid=<?= $fetch_cart['pid']; ?>" class="fas fa-eye"></a>
          <button type="submit" class="fas fa-times" name="delete" onclick="return confirm('delete this item?');"></button>
-         <img src="uploaded_img/<?= $fetch_cart['product_image']; ?>" alt="">
+         <img src="<?= $product_image_path ?>" alt="">
          <div class="name"><?= $fetch_cart['product_name']; ?></div>
          <div class="flex">
             <div class="price"><span>Rs</span><?= $fetch_cart['price']; ?></div>

@@ -56,7 +56,7 @@ section{
 
 .btn,
 .delete-btn,
-.option-btn{
+.option-btn,.active-btn,.inactive-btn{
    display: block;
    margin-top: 1rem;
    border-radius: .5rem;
@@ -73,17 +73,19 @@ section{
    background-color: var(--main-color);
 }
 
-.delete-btn{
+.delete-btn,.inactive-btn{
    background-color: var(--red);
 }
-
+.active-btn{
+   background-color: green;
+}
 .option-btn{
    background-color: var(--orange);
 }
 
 .btn:hover,
 .delete-btn:hover,
-.option-btn:hover{
+.option-btn:hover,.active-btn:hover{
    background-color: var(--black);
 }
 
