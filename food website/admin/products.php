@@ -67,17 +67,22 @@ if(isset($_POST['add_product'])){
 
 }
 
-if(isset($_GET['delete'])){
+if(isset($_GET['update_status'])){
 
    $delete_id = $_GET['update_status'];
-   
-   curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/productsDetail.php?key=6CU1qSJfcs");
-
+   $status_action=$_GET['status_action'];
+   $ch=curl_init();
+   /*curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/productsDetail.php?key=6CU1qSJfcs");*/
+   curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/productsStatus.php?key=6CU1qSJfcs");
    curl_setopt($ch, CURLOPT_POST, 1);
      $product_data['product_id']=$_GET['update_status'];
+     $product_data['status_action']=$_GET['status_action'];
+       $product_data=json_encode($product_data);
    curl_setopt($ch, CURLOPT_POSTFIELDS, $product_data);
    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-   /*$server_product_add=json_decode(curl_exec($ch),true);
+   $server_product_add=curl_exec($ch);
+   print_r($server_product_add);
+/*
    $delete_product_image = $conn->prepare("SELECT * FROM `products` WHERE id = ?");
    $delete_product_image->execute([$delete_id]);
    $fetch_delete_image = $delete_product_image->fetch(PDO::FETCH_ASSOC);
@@ -86,7 +91,10 @@ if(isset($_GET['delete'])){
    $delete_product->execute([$delete_id]);
    $delete_cart = $conn->prepare("DELETE FROM `cart` WHERE pid = ?");
    $delete_cart->execute([$delete_id]);*/
+       
    
+die();
+     
    header('location:products.php');
 
 }
@@ -171,17 +179,19 @@ if(isset($_GET['delete'])){
 
 
          <?php
-     echo    $statusProduct= $fetch_products['productStatus'];
+       $statusProduct= $fetch_products['productStatus'];
               if($statusProduct!=1){
               $btnClass= "delete-btn";
               $btnClassAct="Inactive";
+              $statusAct=1;
               }else{
                $btnClass= "active-btn";
                $btnClassAct="Active";
+               $statusAct=0;
               }
            ?>
          
-         <a href="products.php?update_status=<?= $fetch_products['id']; ?>" class="<?=$btnClass; ?>" onclick="return confirm('update the statius of product?');"><?= $btnClassAct;?></a>
+         <a href="products.php?update_status=<?= $fetch_products['id']; ?>&status_action=<?=$statusAct;?>" class="<?=$btnClass; ?>" onclick="return confirm('update the statius of product?');"><?= $btnClassAct;?></a>
       </div>
    </div>
    <?php

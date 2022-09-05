@@ -64,6 +64,8 @@ $result= json_decode($result,true);
    
          foreach($result['productData']['data'] as  $fetch_products){
             $product_image_path=PRODUCT_IMAGE_PATH."/".$fetch_products['image'];
+            $product_status=$fetch_products['productStatus'];
+            if($product_status==1){
       ?>
       <form action="" method="post" class="box">
          <input type="hidden" name="pid" value="<?= $fetch_products['id']; ?>">
@@ -76,13 +78,13 @@ $result= json_decode($result,true);
          <a href="category.php?category=<?= $fetch_products['category']; ?>" class="cat"><?= $fetch_products['category']; ?></a>
          <div class="name"><?= $fetch_products['name']; ?></div>
          <div class="flex">
-            <div class="price"><span>$</span><?= $fetch_products['price']; ?></div>
+            <div class="price"><span>Rs</span><?= $fetch_products['price']; ?></div>
             <input type="number" name="qty" class="qty" min="1" max="99" value="1" maxlength="2"">
          </div>
       </form>
       <?php
             }
-       
+         }
       ?>
 
    </div>
