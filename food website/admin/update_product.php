@@ -31,15 +31,22 @@ if(isset($_POST['update'])){
    curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
    $result=curl_exec($ch);
    print_r($result);
-print_r($_FILES);
+
   echo  $image_name = $_FILES['image']['name'];
 
    $image_size = $_FILES['image']['size'];
    $image_tmp_name = $_FILES['image']['tmp_name'];
-      die();
+   $image_type = $_FILES['image']['type'];
+
    $image_folder = '../uploaded_img/'.$image_name;
    $cf = new CURLFile($image_tmp_name,$image_type,$image_name);
-     die();
+   $file_data=array("file"=>$cf,"productName"=>$name,'price'=>$price,'category'=>$category,"action"=>"update");
+   print_r($file_data);
+   
+   
+   
+   
+   die();
    $message[] = 'product updated!';
 
  
