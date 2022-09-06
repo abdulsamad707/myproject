@@ -41,10 +41,24 @@ include 'components/add_cart.php';
 
       <?php
          $category = $_GET['category'];
-         $select_products = $conn->prepare("SELECT * FROM `products` WHERE category = ?");
-         $select_products->execute([$category]);
-         if($select_products->rowCount() > 0){
-            while($fetch_products = $select_products->fetch(PDO::FETCH_ASSOC)){
+         $category = filter_var($category, FILTER_SANITIZE_STRING);
+         $ch=curl_init();
+         curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/products.php?key=6CU1qSJfcs&cate=$category");
+         $header[]="Content-Type:applictaion/json";
+         curl_setopt($ch,CURLOPT_POST,false);
+         curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+         curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+         $result=curl_exec($ch);
+         $result=json_decode($result,true);
+      
+           $totalRecord=$result['productData']['totalRecord'];
+      
+    
+         if($totalRecord > 0){
+            foreach($totalRecord=$result['productData']['data'] as $fetch_products){
+               $product_image_path=PRODUCT_IMAGE_PATH."/".$fetch_products['image'];
+               $product_status=$fetch_products['productStatus'];
       ?>
       <form action="" method="post" class="box">
          <input type="hidden" name="pid" value="<?= $fetch_products['id']; ?>">
@@ -53,10 +67,10 @@ include 'components/add_cart.php';
          <input type="hidden" name="image" value="<?= $fetch_products['image']; ?>">
          <a href="quick_view.php?pid=<?= $fetch_products['id']; ?>" class="fas fa-eye"></a>
          <button type="submit" class="fas fa-shopping-cart" name="add_to_cart"></button>
-         <img src="uploaded_img/<?= $fetch_products['image']; ?>" alt="">
+         <img src="<?=    $product_image_path; ?>" alt="">
          <div class="name"><?= $fetch_products['name']; ?></div>
          <div class="flex">
-            <div class="price"><span>$</span><?= $fetch_products['price']; ?></div>
+            <div class="price"><span>Rs</span><?= $fetch_products['price']; ?></div>
             <input type="number" name="qty" class="qty" min="1" max="99" value="1" maxlength="2">
          </div>
       </form>

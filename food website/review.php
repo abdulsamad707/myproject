@@ -68,7 +68,7 @@ if(isset($_POST['send'])){
 <!-- header section ends -->
 
 <div class="heading">
-   <h3>contact us</h3>
+   <h3>Review</h3>
    <p><a href="home.php">home</a> <span> / review</span></p>
 </div>
 

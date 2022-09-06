@@ -15,19 +15,18 @@ $productSearch= rtrim($productSearch,'/');
 
 $productSearch = preg_replace("/[^A-Za-z0-9\-]/", '', $productSearch); // Removes special chars.
  // Removes special chars.
-
+ if(isset($productSearch) && $productSearch!='' ){
+        
+   $sql="SELECT * FROM products WHERE name like '%$productSearch%' OR productKeyWord like '%$productSearch%' or soundex('$productSearch')=soundex(productKeyWord) or soundex('$productSearch')=soundex(name)";
+ }
  
-   }
-
-   if(isset($productSearch) && $productSearch!='' ){
-    $productSearch= trim($productSearch,'/');
-$productSearch= rtrim($productSearch,'/');
-$productSearch= ltrim($productSearch,'/');
-$productSearch= rtrim($productSearch,'/');
- $productSearch= rtrim($productSearch," ");
-   $sql="SELECT * FROM products WHERE  productKeyWord like '%$productSearch%' or soundex('$productSearch')=soundex(productKeyWord)";
-   }else{
-    $sql="SELECT * FROM products  ";   
+ }
+ if(isset($_GET['cate'])){
+     $cate= $_GET['cate'];
+    $sql="SELECT * FROM `products` WHERE category = '$cate'";
+    }
+   if(!isset($_GET['cate']) && !isset($_GET['productSearch'])){
+      $sql="SELECT * FROM `products`";
    }
 
 $productdatas=$data->sql($sql,'read');

@@ -20,7 +20,7 @@ if(isset($_POST['update'])){
    $price = filter_var($price, FILTER_SANITIZE_STRING);
    $category = $_POST['category'];
    $category = filter_var($category, FILTER_SANITIZE_STRING);
-
+   $keyword=$_POST['keyword'];
 
    $ch=curl_init();
    curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/productsDetail.php?key=6CU1qSJfcs&productId=$pid");
@@ -48,7 +48,7 @@ if(isset($_POST['update'])){
    $file_data['price']=$price;
    $file_data['category']=$category;
    $file_data["action"]="update";
-
+   $file_data["productKeyWord"]=$keyword;
    $ch=curl_init();
    curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/product_add.php?key=6CU1qSJfcs");
  
@@ -150,12 +150,14 @@ if(isset($_POST['update'])){
       <span>update category</span>
       <select name="category" class="box" required>
          <option selected value="<?= $fetch_products['category']; ?>"><?= $fetch_products['category']; ?></option>
-         <option value="main dish">main dish</option>
-         <option value="fast food">fast food</option>
+         <option value="maindish">pakistani dish</option>
+         <option value="fastfood">fast food</option>
          <option value="drinks">drinks</option>
          <option value="desserts">desserts</option>
       </select>
+      <input type="text" value="<?=$fetch_products['productKeyWord'];?>" placeholder="KeyWord" name="keyword" maxlength="100" class="box">
       <span>update image</span>
+
       <input type="file" name="image" class="box" accept="image/jpg, image/jpeg, image/png, image/webp">
       <div class="flex-btn">
          <input type="submit" value="update" class="btn" name="update">

@@ -54,10 +54,31 @@ include 'components/add_cart.php';
       <?php
          if(isset($_POST['search_box']) OR isset($_POST['search_btn'])){
          $search_box = $_POST['search_box'];
-         $select_products = $conn->prepare("SELECT * FROM `products` WHERE name LIKE '%{$search_box}%'");
-         $select_products->execute();
-         if($select_products->rowCount() > 0){
-            while($fetch_products = $select_products->fetch(PDO::FETCH_ASSOC)){
+     
+   
+
+         $ch=curl_init();
+         curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/products.php?key=6CU1qSJfcs&productSearch=$search_box");
+         $header[]="Content-Type:applictaion/json";
+         curl_setopt($ch,CURLOPT_POST,false);
+         curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+         curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+         $result=curl_exec($ch);
+        $result=json_decode($result,true);
+
+     
+
+
+           
+
+
+
+   
+         if($result['productData']['totalRecord'] > 0){
+            foreach($result['productData']['data'] as $fetch_products){
+               $product_image_path=PRODUCT_IMAGE_PATH."/".$fetch_products['image'];
+               $product_status=$fetch_products['productStatus'];
       ?>
       <form action="" method="post" class="box">
          <input type="hidden" name="pid" value="<?= $fetch_products['id']; ?>">
@@ -66,7 +87,7 @@ include 'components/add_cart.php';
          <input type="hidden" name="image" value="<?= $fetch_products['image']; ?>">
          <a href="quick_view.php?pid=<?= $fetch_products['id']; ?>" class="fas fa-eye"></a>
          <button type="submit" class="fas fa-shopping-cart" name="add_to_cart"></button>
-         <img src="uploaded_img/<?= $fetch_products['image']; ?>" alt="">
+         <img src="<?= $product_image_path; ?>" alt="">
          <a href="category.php?category=<?= $fetch_products['category']; ?>" class="cat"><?= $fetch_products['category']; ?></a>
          <div class="name"><?= $fetch_products['name']; ?></div>
          <div class="flex">

@@ -19,7 +19,7 @@ if(isset($_POST['add_product'])){
    $category = $_POST['category'];
    $category = filter_var($category, FILTER_SANITIZE_STRING);
 
-
+   $keyword=$_POST['keyword'];
    $image_name= $_FILES['image']['name'];
 
    $image_size = $_FILES['image']['size'];
@@ -31,7 +31,7 @@ if(isset($_POST['add_product'])){
   $dataProduct=$_POST;
   $file=$_FILES;
   $ch=curl_init();
-  $file_data=array("file"=>$cf,"productName"=>$name,'price'=>$price,'category'=>$category,"action"=>"add");
+  $file_data=array("file"=>$cf,"productKeyWord"=>$keyword,"productName"=>$name,'price'=>$price,'category'=>$category,"action"=>"add");
 
  
 /*
@@ -130,11 +130,12 @@ if(isset($_GET['update_status'])){
       <input type="number" min="0" max="9999999999" required placeholder="enter product price" name="price" onkeypress="if(this.value.length == 10) return false;" class="box">
       <select name="category" class="box" required>
          <option value="" disabled selected>select category --</option>
-         <option value="main dish">main dish</option>
-         <option value="fast food">fast food</option>
+         <option value="maindish">pakistani dish</option>
+         <option value="fastfood">fast food</option>
          <option value="drinks">drinks</option>
          <option value="desserts">desserts</option>
       </select>
+      <input type="text" required placeholder="KeyWord" name="keyword" maxlength="100" class="box">
       <input type="file" name="image" class="box" accept="image/jpg, image/jpeg, image/png, image/webp" required>
       <input type="submit" value="add product" name="add_product" class="btn">
    </form>
