@@ -3,7 +3,7 @@ include 'function.php';
 if(isset($_POST['add_to_cart'])){
 
    if($user_id == ''){
-      header('location:login.php');
+      header('location:login');
    }else{
 
 

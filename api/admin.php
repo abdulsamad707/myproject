@@ -13,9 +13,9 @@ if(!isset($status)){
 
        if(isset($_GET['id'])){
        $id=  $_GET['id'];
-       $sql="SELECT * FROM users WHERE id='$id'";
+       $sql="SELECT * FROM admin WHERE id='$id'";
        }else{
-       $sql= "SELECT * FROM users";
+       $sql= "SELECT * FROM admin";
            
        }
        $userdata=$data->sql($sql,"read");

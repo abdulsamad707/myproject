@@ -30,24 +30,40 @@ if(isset($_POST['update'])){
    curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
    curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
    $result=curl_exec($ch);
-   print_r($result);
 
-  echo  $image_name = $_FILES['image']['name'];
+
+   $image_name = $_FILES['image']['name'];
 
    $image_size = $_FILES['image']['size'];
    $image_tmp_name = $_FILES['image']['tmp_name'];
    $image_type = $_FILES['image']['type'];
 
    $image_folder = '../uploaded_img/'.$image_name;
+   if($image_name!=''){
    $cf = new CURLFile($image_tmp_name,$image_type,$image_name);
-   $file_data=array("file"=>$cf,"productName"=>$name,'price'=>$price,'category'=>$category,"action"=>"update");
-   print_r($file_data);
+
+   $file_data['file']=$cf;
+   } 
+   $file_data['productName']=$name;
+   $file_data['price']=$price;
+   $file_data['category']=$category;
+   $file_data["action"]="update";
+
+   $ch=curl_init();
+   curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/product_add.php?key=6CU1qSJfcs");
+ 
+   curl_setopt($ch, CURLOPT_POST, 1);
+ 
+   $header=array('Content-Type:multipart/form-data'); 
+  /* curl_setopt($ch,CURLOPT_HTTPHEADER,$header);*/
+   curl_setopt($ch, CURLOPT_POSTFIELDS, $file_data);
+   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+   $server_product_update=curl_exec($ch);
    
-   
-   
-   
-   die();
-   $message[] = 'product updated!';
+    $server_product_update=json_decode($server_product_update,true);
+   $messages=$server_product_update['message'];
+   $message[]=$messages;
+
 
  
 

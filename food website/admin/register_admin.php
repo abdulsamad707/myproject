@@ -11,28 +11,27 @@ if(!isset($admin_id)){
 };
 
 if(isset($_POST['submit'])){
+ 
+     unset($_POST['submit']);
+        $dataRegister=$_POST;
+     $dataRegister=json_encode($dataRegister);
 
-   $name = $_POST['name'];
-   $name = filter_var($name, FILTER_SANITIZE_STRING);
-   $pass = sha1($_POST['pass']);
-   $pass = filter_var($pass, FILTER_SANITIZE_STRING);
-   $cpass = sha1($_POST['cpass']);
-   $cpass = filter_var($cpass, FILTER_SANITIZE_STRING);
-
-   $select_admin = $conn->prepare("SELECT * FROM `admin` WHERE name = ?");
-   $select_admin->execute([$name]);
+     $ch = curl_init();
    
-   if($select_admin->rowCount() > 0){
-      $message[] = 'username already exists!';
-   }else{
-      if($pass != $cpass){
-         $message[] = 'confirm passowrd not matched!';
-      }else{
-         $insert_admin = $conn->prepare("INSERT INTO `admin`(name, password) VALUES(?,?)");
-         $insert_admin->execute([$name, $cpass]);
-         $message[] = 'new admin registered!';
-      }
-   }
+     curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/admin_register.php?key=6CU1qSJfcs");
+     curl_setopt($ch, CURLOPT_POST, 1);
+     curl_setopt($ch, CURLOPT_POSTFIELDS, $dataRegister);
+     curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+     $server_output_login=curl_exec($ch);
+     $server_output_login=json_decode($server_output_login,true);
+    
+
+       $message[] = $server_output_login['message'];
+     
+
+          
+      
 
 }
 
@@ -65,7 +64,7 @@ if(isset($_POST['submit'])){
       <h3>register new</h3>
       <input type="text" name="name" maxlength="20" required placeholder="enter your username" class="box" oninput="this.value = this.value.replace(/\s/g, '')">
       <input type="password" name="pass" maxlength="20" required placeholder="enter your password" class="box" oninput="this.value = this.value.replace(/\s/g, '')">
-      <input type="password" name="cpass" maxlength="20" required placeholder="confirm your password" class="box" oninput="this.value = this.value.replace(/\s/g, '')">
+   
       <input type="submit" value="register now" name="submit" class="btn">
    </form>
 

@@ -47,17 +47,26 @@ if(isset($_GET['delete'])){
    <div class="box-container">
 
    <?php
-      $select_messages = $conn->prepare("SELECT * FROM `messages`");
-      $select_messages->execute();
-      if($select_messages->rowCount() > 0){
-         while($fetch_messages = $select_messages->fetch(PDO::FETCH_ASSOC)){
+      $ch=curl_init();
+      curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/messages.php?key=6CU1qSJfcs");
+      $header[]="Content-Type:applictaion/json";
+      curl_setopt($ch,CURLOPT_POST,false);
+      curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+      curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+      curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+      $result=curl_exec($ch);
+         
+        $result=json_decode($result,true);
+   
+      if($result['totalRecord'] > 0 ){
+      foreach($result['data'] as $fetch_messages){
    ?>
    <div class="box">
       <p> name : <span><?= $fetch_messages['name']; ?></span> </p>
       <p> number : <span><?= $fetch_messages['number']; ?></span> </p>
       <p> email : <span><?= $fetch_messages['email']; ?></span> </p>
       <p> message : <span><?= $fetch_messages['message']; ?></span> </p>
-      <a href="messages.php?delete=<?= $fetch_messages['id']; ?>" class="delete-btn" onclick="return confirm('delete this message?');">delete</a>
+   
    </div>
    <?php
          }

@@ -7,52 +7,34 @@ session_start();
 $admin_id = $_SESSION['admin_id'];
 
 if(!isset($admin_id)){
-   header('location:admin_login.php');
+   header('location:admin_login');
 }
 
 if(isset($_POST['submit'])){
 
    $name = $_POST['name'];
-   $name = filter_var($name, FILTER_SANITIZE_STRING);
+   unset($_POST['submit']);
+  
+       $dataPost=$_POST;
+       $dataPost['id']=$admin_id;
+       $dataPost=json_encode($dataPost);
 
-   if(!empty($name)){
-      $select_name = $conn->prepare("SELECT * FROM `admin` WHERE name = ?");
-      $select_name->execute([$name]);
-      if($select_name->rowCount() > 0){
-         $message[] = 'username already taken!';
-      }else{
-         $update_name = $conn->prepare("UPDATE `admin` SET name = ? WHERE id = ?");
-         $update_name->execute([$name, $admin_id]);
-      }
-   }
+       $ch=curl_init();
+       /*curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/productsDetail.php?key=6CU1qSJfcs");*/
+       curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/update_admin_profile.php?key=6CU1qSJfcs");
+       curl_setopt($ch, CURLOPT_POST, 1);
+       curl_setopt($ch, CURLOPT_POSTFIELDS, $dataPost);
+       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+       $server_product_add=curl_exec($ch);
+       $server_product_add=json_decode($server_product_add,true);
+       $message[]=$server_product_add['message'];
 
-   $empty_pass = 'da39a3ee5e6b4b0d3255bfef95601890afd80709';
-   $select_old_pass = $conn->prepare("SELECT password FROM `admin` WHERE id = ?");
-   $select_old_pass->execute([$admin_id]);
-   $fetch_prev_pass = $select_old_pass->fetch(PDO::FETCH_ASSOC);
-   $prev_pass = $fetch_prev_pass['password'];
-   $old_pass = sha1($_POST['old_pass']);
-   $old_pass = filter_var($old_pass, FILTER_SANITIZE_STRING);
-   $new_pass = sha1($_POST['new_pass']);
-   $new_pass = filter_var($new_pass, FILTER_SANITIZE_STRING);
-   $confirm_pass = sha1($_POST['confirm_pass']);
-   $confirm_pass = filter_var($confirm_pass, FILTER_SANITIZE_STRING);
 
-   if($old_pass != $empty_pass){
-      if($old_pass != $prev_pass){
-         $message[] = 'old password not matched!';
-      }elseif($new_pass != $confirm_pass){
-         $message[] = 'confirm password not matched!';
-      }else{
-         if($new_pass != $empty_pass){
-            $update_pass = $conn->prepare("UPDATE `admin` SET password = ? WHERE id = ?");
-            $update_pass->execute([$confirm_pass, $admin_id]);
-            $message[] = 'password updated successfully!';
-         }else{
-            $message[] = 'please enter a new password!';
-         }
-      }
-   }
+
+
+
+
+ 
 
 }
 

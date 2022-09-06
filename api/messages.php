@@ -5,7 +5,6 @@ header('Access-Control-Allow-Origin:*');
 header('Access-Control-Allow-Methods:GET');
 header('Content-Type:appliction/json');
 header('Access-Control-Allow-Headers:Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods,Authorization,X-Requested-With');
-
 include("validkey.php");
 ob_start();
 if(!isset($status)){
@@ -13,9 +12,9 @@ if(!isset($status)){
 
        if(isset($_GET['id'])){
        $id=  $_GET['id'];
-       $sql="SELECT * FROM users WHERE id='$id'";
+       $sql="SELECT * FROM users";
        }else{
-       $sql= "SELECT * FROM users";
+       $sql= "SELECT * FROM messages";
            
        }
        $userdata=$data->sql($sql,"read");

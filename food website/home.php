@@ -94,17 +94,17 @@ include 'components/add_cart.php';
 
    <div class="box-container">
 
-      <a href="category.php?category=fast food" class="box">
+      <a href="category?category=fast food" class="box">
          <img src="images/cat-1.png" alt="">
          <h3>fast food</h3>
       </a>
 
-      <a href="category.php?category=main dish" class="box">
+      <a href="category?category=main dish" class="box">
          <img src="images/cat-2.png" alt="">
-         <h3>main dishes</h3>
+         <h3>pakistan dish</h3>
       </a>
 
-      <a href="category.php?category=drinks" class="box">
+      <a href="category?category=drinks" class="box">
          <img src="images/cat-3.png" alt="">
          <h3>drinks</h3>
       </a>

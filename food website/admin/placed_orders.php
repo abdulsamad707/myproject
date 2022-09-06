@@ -14,18 +14,27 @@ if(isset($_POST['update_payment'])){
 
    $order_id = $_POST['order_id'];
    $payment_status = $_POST['payment_status'];
-   $update_status = $conn->prepare("UPDATE `orders` SET payment_status = ? WHERE id = ?");
-   $update_status->execute([$payment_status, $order_id]);
-   $message[] = 'payment status updated!';
+  
+   $ch=curl_init();
+   curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/update_order.php?key=6CU1qSJfcs");
+   curl_setopt($ch, CURLOPT_POST, 1);
+       unset($_POST['update_payment']);
+       $product_data=json_encode($_POST);
+   curl_setopt($ch, CURLOPT_POSTFIELDS, $product_data);
+   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+   $server_product_add=curl_exec($ch);
+     $server_product_add=json_decode($server_product_add,true);
+     $server_product_add['message']="Order Status Updated";
+
+
+   
+
+
+   $message[] = $server_product_add['message'];
 
 }
 
-if(isset($_GET['delete'])){
-   $delete_id = $_GET['delete'];
-   $delete_order = $conn->prepare("DELETE FROM `orders` WHERE id = ?");
-   $delete_order->execute([$delete_id]);
-   header('location:placed_orders.php');
-}
+
 
 ?>
 
@@ -57,13 +66,27 @@ if(isset($_GET['delete'])){
    <div class="box-container">
 
    <?php
-      $select_orders = $conn->prepare("SELECT * FROM `orders`");
-      $select_orders->execute();
-      if($select_orders->rowCount() > 0){
-         while($fetch_orders = $select_orders->fetch(PDO::FETCH_ASSOC)){
+
+$ch=curl_init();
+curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/orders.php?key=6CU1qSJfcs");
+$header[]="Content-Type:applictaion/json";
+curl_setopt($ch,CURLOPT_POST,false);
+curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+$result=curl_exec($ch);
+$result= json_decode($result,true);
+
+ $totaLOrder=$result['totalRecord'];
+
+
+
+ 
+      if($totaLOrder >  0){
+        foreach ($result['data'] as $fetch_orders ){
    ?>
    <div class="box">
-      <p> user id : <span><?= $fetch_orders['user_id']; ?></span> </p>
+      <p> Order id : <span><?= $fetch_orders['id']; ?></span> </p>
       <p> placed on : <span><?= $fetch_orders['placed_on']; ?></span> </p>
       <p> name : <span><?= $fetch_orders['name']; ?></span> </p>
       <p> email : <span><?= $fetch_orders['email']; ?></span> </p>
@@ -75,13 +98,13 @@ if(isset($_GET['delete'])){
       <form action="" method="POST">
          <input type="hidden" name="order_id" value="<?= $fetch_orders['id']; ?>">
          <select name="payment_status" class="drop-down">
-            <option value="" selected disabled><?= $fetch_orders['payment_status']; ?></option>
+            <option value="<?= $fetch_orders['payment_status']; ?>" selected ><?= $fetch_orders['payment_status']; ?></option>
             <option value="pending">pending</option>
             <option value="completed">completed</option>
          </select>
          <div class="flex-btn">
             <input type="submit" value="update" class="btn" name="update_payment">
-            <a href="placed_orders.php?delete=<?= $fetch_orders['id']; ?>" class="delete-btn" onclick="return confirm('delete this order?');">delete</a>
+           
          </div>
       </form>
    </div>

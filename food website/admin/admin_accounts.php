@@ -10,10 +10,36 @@ if(!isset($admin_id)){
    header('location:admin_login.php');
 }
 
-if(isset($_GET['delete'])){
-   $delete_id = $_GET['delete'];
-   $delete_admin = $conn->prepare("DELETE FROM `admin` WHERE id = ?");
-   $delete_admin->execute([$delete_id]);
+if(isset($_GET['update'])){
+   $update_id = $_GET['update'];
+   $ch=curl_init();
+   curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/admin.php?key=6CU1qSJfcs&id=$update_id");
+   $header[]="Content-Type:applictaion/json";
+   curl_setopt($ch,CURLOPT_POST,false);
+   curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+   curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+   curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+   $result=curl_exec($ch);
+   $result=json_decode($result,true);
+  
+    $old_status=$result['data'][0]['status'];
+    if($old_status==1){
+      $newStatus=0;
+    }else{
+      $newStatus=1;
+    }
+     $update_admin['id']=$update_id;
+     $update_admin['status']=$newStatus;
+     $update_admin=json_encode($update_admin);
+  
+     $ch=curl_init();
+     /*curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/productsDetail.php?key=6CU1qSJfcs");*/
+     curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/admin_status.php?key=6CU1qSJfcs");
+     curl_setopt($ch, CURLOPT_POST, 1);
+     curl_setopt($ch, CURLOPT_POSTFIELDS, $update_admin);
+     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+     $server_product_add=curl_exec($ch);
+
    header('location:admin_accounts.php');
 }
 
@@ -48,28 +74,57 @@ if(isset($_GET['delete'])){
 
    <div class="box">
       <p>register new admin</p>
-      <a href="register_admin.php" class="option-btn">register</a>
+      <a href="register_admin" class="option-btn">register</a>
    </div>
 
    <?php
+         $ch=curl_init();
+         curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/admin.php?key=6CU1qSJfcs");
+         $header[]="Content-Type:applictaion/json";
+         curl_setopt($ch,CURLOPT_POST,false);
+         curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+         curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+         $result=curl_exec($ch);
+            
+           $result=json_decode($result,true);
+       
       $select_account = $conn->prepare("SELECT * FROM `admin`");
       $select_account->execute();
-      if($select_account->rowCount() > 0){
-         while($fetch_accounts = $select_account->fetch(PDO::FETCH_ASSOC)){  
+      if($result['totalRecord'] > 0){
+         foreach($result['data'] as $fetch_accounts){  
+            if($fetch_accounts['id'] != $admin_id){
    ?>
    <div class="box">
       <p> admin id : <span><?= $fetch_accounts['id']; ?></span> </p>
       <p> username : <span><?= $fetch_accounts['name']; ?></span> </p>
       <div class="flex-btn">
-         <a href="admin_accounts.php?delete=<?= $fetch_accounts['id']; ?>" class="delete-btn" onclick="return confirm('delete this account?');">delete</a>
+         
          <?php
+
+
+
             if($fetch_accounts['id'] == $admin_id){
-               echo '<a href="update_profile.php" class="option-btn">update</a>';
+                   
+            }else{
+             if($fetch_accounts['status']==1){
+               $btnClass= "btn";
+               $btnClassAct="Active";
+             }else{
+               $btnClass= "delete-btn";
+               $btnClassAct="Inactive";
+             }
+
+               ?>
+                 <a href="?update=<?= $fetch_accounts['id']?>"  class=" <?php echo $btnClass;?>"><?=   $btnClassAct; ?></a>
+             
+               <?php
             }
          ?>
       </div>
    </div>
    <?php
+            }
       }
    }else{
       echo '<p class="empty">no accounts available</p>';

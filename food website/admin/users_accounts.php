@@ -10,14 +10,36 @@ if(!isset($admin_id)){
    header('location:admin_login.php');
 }
 
-if(isset($_GET['delete'])){
-   $delete_id = $_GET['delete'];
-   $delete_users = $conn->prepare("DELETE FROM `users` WHERE id = ?");
-   $delete_users->execute([$delete_id]);
-   $delete_order = $conn->prepare("DELETE FROM `orders` WHERE user_id = ?");
-   $delete_order->execute([$delete_id]);
-   $delete_cart = $conn->prepare("DELETE FROM `cart` WHERE user_id = ?");
-   $delete_cart->execute([$delete_id]);
+if(isset($_GET['update'])){
+   $update_id = $_GET['update'];
+   $ch=curl_init();
+   curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/users.php?key=6CU1qSJfcs&id=$update_id");
+   $header[]="Content-Type:applictaion/json";
+   curl_setopt($ch,CURLOPT_POST,false);
+   curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+   curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+   curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+   $result=curl_exec($ch);
+
+   $result=json_decode($result,true);
+  
+   $old_status=$result['data'][0]['status'];
+   if($old_status==1){
+      $newStatus=0;
+    }else{
+      $newStatus=1;
+    }
+     $update_user['id']=$update_id;
+     $update_user['status']=$newStatus;
+     $update_user=json_encode($update_user);
+     $ch=curl_init();
+     /*curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/productsDetail.php?key=6CU1qSJfcs");*/
+     curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/update_users.php?key=6CU1qSJfcs");
+     curl_setopt($ch, CURLOPT_POST, 1);
+     curl_setopt($ch, CURLOPT_POSTFIELDS, $update_user);
+     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+     $server_product_add=curl_exec($ch);
+
    header('location:users_accounts.php');
 }
 
@@ -51,15 +73,37 @@ if(isset($_GET['delete'])){
    <div class="box-container">
 
    <?php
-      $select_account = $conn->prepare("SELECT * FROM `users`");
-      $select_account->execute();
-      if($select_account->rowCount() > 0){
-         while($fetch_accounts = $select_account->fetch(PDO::FETCH_ASSOC)){  
-   ?>
+     $ch=curl_init();
+     curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/users.php?key=6CU1qSJfcs");
+     $header[]="Content-Type:applictaion/json";
+     curl_setopt($ch,CURLOPT_POST,false);
+     curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+     curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+     curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+     $result=curl_exec($ch);
+
+       $result=json_decode($result,true);
+      
+
+     
+      if($result['totalRecord'] > 0){
+         foreach($result['data'] as $fetch_accounts){  
+
+            if($fetch_accounts['status']==1){
+               $btnClass= "btn";
+               $btnClassAct="Active";
+             }else{
+               $btnClass= "delete-btn";
+               $btnClassAct="Inactive";
+             }
+         
+
+
+   ?>      
    <div class="box">
       <p> user id : <span><?= $fetch_accounts['id']; ?></span> </p>
       <p> username : <span><?= $fetch_accounts['name']; ?></span> </p>
-      <a href="users_accounts.php?delete=<?= $fetch_accounts['id']; ?>" class="delete-btn" onclick="return confirm('delete this account?');">delete</a>
+      <a href="users_accounts?update=<?= $fetch_accounts['id']; ?>" class="<?=   $btnClass; ?>"><?= $btnClassAct; ?></a>
    </div>
    <?php
       }

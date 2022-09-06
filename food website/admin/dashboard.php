@@ -122,12 +122,12 @@ if(!isset($admin_id)){
          $select_messages = $conn->prepare("SELECT * FROM `messages`");
          $select_messages->execute();
          $numbers_of_messages = $select_messages->rowCount();
+      
       ?>
       <h3><?= $numbers_of_messages; ?></h3>
       <p>new messages</p>
       <a href="messages" class="btn">see messages</a>
    </div>
-
    </div>
 
 </section>
