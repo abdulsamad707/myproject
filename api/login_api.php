@@ -19,9 +19,17 @@ if (!isset($status))
 
 
         if(password_verify($password,$row['password'])){
+
+
+          if($row['status']==1){
         $logindata['message']="login Successfully";
         $logindata['id']=$row['id'];
         $logindata['status']=1;
+          }else{
+            $logindata['message']="Your Account has Been Blocked By Admin";
+            $logindata['id']='';
+            $logindata['status']=0;
+          }
         }else{
             $logindata['message']="Wrong Password";
             $logindata['id']="";

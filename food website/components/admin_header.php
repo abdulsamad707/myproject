@@ -24,6 +24,7 @@ if(isset($message)){
          <a href="admin_accounts">admins</a>
          <a href="users_accounts">users</a>
          <a href="messages">messages</a>
+         <a href="review">review</a>
       </nav>
 
       <div class="icons">

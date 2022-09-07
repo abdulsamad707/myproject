@@ -7,7 +7,7 @@ session_start();
 if(isset($_SESSION['user_id'])){
    $user_id = $_SESSION['user_id'];
 }else{
-   $user_id = '';
+   $user_id = 0;
 
 };
 
@@ -19,13 +19,15 @@ if(isset($_POST['send'])){
    $email = filter_var($email, FILTER_SANITIZE_STRING);
    $number = $_POST['number'];
    $number = filter_var($number, FILTER_SANITIZE_STRING);
-   $msg = $_POST['msg'];
-   $msg = filter_var($msg, FILTER_SANITIZE_STRING);
-    $post_checkout['message']=$msg;
+
+    $review = $_POST['msg'];
+    $review = filter_var($review, FILTER_SANITIZE_STRING);
+     $post_checkout['review']=$review;
     $post_checkout['name']=$name;
     $post_checkout['email']=$email;
     $post_checkout['number']=$number;
-    $post_checkout['user_id']=$user_id;
+    $post_checkout['status']=0;
+    $post_checkout['action']="review";
    $post_data=json_encode($post_checkout);
    $ch = curl_init();
    curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/contact.php?key=6CU1qSJfcs");
@@ -35,11 +37,10 @@ if(isset($_POST['send'])){
    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
    $server_output_order = curl_exec($ch);
 
-
    $server_output_order=json_decode($server_output_order,true);
 
 
-   $message[]="Message Sent Successfully";
+   $message[]="Review Sent Successfully";
 
 
 }
@@ -52,7 +53,7 @@ if(isset($_POST['send'])){
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>contact</title>
+   <title>Review</title>
 
    <!-- font awesome cdn link  -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">

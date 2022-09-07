@@ -17,7 +17,7 @@ $productSearch = preg_replace("/[^A-Za-z0-9\-]/", '', $productSearch); // Remove
  // Removes special chars.
  if(isset($productSearch) && $productSearch!='' ){
         
-   $sql="SELECT * FROM products WHERE name like '%$productSearch%' OR productKeyWord like '%$productSearch%' or soundex('$productSearch')=soundex(productKeyWord) or soundex('$productSearch')=soundex(name)";
+   $sql="SELECT * FROM products WHERE category like '%$productSearch%' or  name like '%$productSearch%' OR productKeyWord like '%$productSearch%' or soundex('$productSearch')=soundex(productKeyWord) or soundex('$productSearch')=soundex(name)";
  }
  
  }

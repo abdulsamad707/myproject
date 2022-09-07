@@ -53,13 +53,25 @@ if(isset($_SESSION['user_id'])){
       <div class="content">
          <h3>why choose us?</h3>
          <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Deserunt, neque debitis incidunt qui ipsum sed doloremque a molestiae in veritatis ullam similique sunt aliquam dolores dolore? Quasi atque debitis nobis!</p>
-         <a href="menu.html" class="btn">our menu</a>
+         <a href="menu" class="btn">our menu</a>
       </div>
 
    </div>
 
 </section>
 
+<?php
+$ch=curl_init();
+      curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/review.php?key=6CU1qSJfcs");
+      $header[]="Content-Type:applictaion/json";
+      curl_setopt($ch,CURLOPT_POST,false);
+      curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+      curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+      curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+      $results=curl_exec($ch);
+      $results=json_decode($results,true);
+
+      ?>
 <!-- about section ends -->
 
 <!-- steps section starts  -->
@@ -95,7 +107,9 @@ if(isset($_SESSION['user_id'])){
 <!-- steps section ends -->
 
 <!-- reviews section starts  -->
-
+<?php
+if(isset($results['data'][0])){
+   ?>
 <section class="reviews">
 
    <h1 class="title">customer's reivews</h1>
@@ -103,48 +117,33 @@ if(isset($_SESSION['user_id'])){
    <div class="swiper reviews-slider">
 
       <div class="swiper-wrapper">
+      
 
+
+          <?php
+          if(isset($results['data'][0])){
+              foreach($results['data'] as $reviews){
+          ?> 
          <div class="swiper-slide slide">
-            <img src="images/pic-1.png" alt="">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos voluptate eligendi laborum molestias ut earum nulla sint voluptatum labore nemo.</p>
-         
-            <h3>john deo</h3>
+      
+            <p><?=$reviews['review'];?></p>
+            
+            <h3><?=$reviews['name'];?></h3>
+       <h4>     <?=$reviews['created_at'];?></h4>
          </div>
+         <?php
+          }
+         }
+          
+         ?>
 
-         <div class="swiper-slide slide">
-            <img src="images/pic-2.png" alt="">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos voluptate eligendi laborum molestias ut earum nulla sint voluptatum labore nemo.</p>
         
-            <h3>john deo</h3>
-         </div>
+         <?php
+          
+          ?>
+     
 
-         <div class="swiper-slide slide">
-            <img src="images/pic-3.png" alt="">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos voluptate eligendi laborum molestias ut earum nulla sint voluptatum labore nemo.</p>
-           
-            <h3>john deo</h3>
-         </div>
-
-         <div class="swiper-slide slide">
-            <img src="images/pic-4.png" alt="">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos voluptate eligendi laborum molestias ut earum nulla sint voluptatum labore nemo.</p>
-           
-            <h3>john deo</h3>
-         </div>
-
-         <div class="swiper-slide slide">
-            <img src="images/pic-5.png" alt="">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos voluptate eligendi laborum molestias ut earum nulla sint voluptatum labore nemo.</p>
-         
-            <h3>john deo</h3>
-         </div>
-
-         <div class="swiper-slide slide">
-            <img src="images/pic-6.png" alt="">
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quos voluptate eligendi laborum molestias ut earum nulla sint voluptatum labore nemo.</p>
        
-            <h3>john deo</h3>
-         </div>
 
       </div>
 
@@ -153,7 +152,8 @@ if(isset($_SESSION['user_id'])){
    </div>
 
 </section>
-
+<?php }
+?>
 <!-- reviews section ends -->
 
 

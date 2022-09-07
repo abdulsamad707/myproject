@@ -25,7 +25,8 @@ if(isset($_POST['send'])){
     $post_checkout['name']=$name;
     $post_checkout['email']=$email;
     $post_checkout['number']=$number;
-    $post_checkout['user_id']=$user_id;
+   
+    $post_checkout['action']="message";
    $post_data=json_encode($post_checkout);
    $ch = curl_init();
    curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/contact.php?key=6CU1qSJfcs");
@@ -39,7 +40,7 @@ if(isset($_POST['send'])){
    $server_output_order=json_decode($server_output_order,true);
 
 
-   $message[]="Message Sent Successfully";
+   $message[]="Review Sent Successfully";
 
 
 }

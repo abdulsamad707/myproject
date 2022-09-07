@@ -15,7 +15,7 @@ if(!isset($status)){
     $order_sql="SELECT id, name,number,email,method,address,total_products,total_price,payment_status,DATE_FORMAT(placed_on,'%d-%M-%Y') as placed_on from orders WHERE user_id='$user_id'";
 
      }else{
-      $order_sql="SELECT id, name,number,email,method,address,total_products,total_price,payment_status,DATE_FORMAT(placed_on,'%d-%M-%Y') as placed_on from orders ";
+      $order_sql="SELECT id, name,number,email,method,address,total_products,total_price,payment_status,DATE_FORMAT(placed_on,'%d-%M-%Y') as placed_on from orders Order By Id desc";
 
      }
       $order_data_container=  $data->sql($order_sql,'read');

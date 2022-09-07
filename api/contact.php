@@ -8,13 +8,20 @@ header('Access-Control-Allow-Origin:*');
 header('Access-Control-Allow-Headers:Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods,Authorization,X-Requested-With');
 $userdata=file_get_contents("php://input");
 $userdata=json_decode($userdata,true);
-
-
+if($userdata['action']=='message'){
+unset($userdata['action']);
 $data->insert("messages",$userdata);
 $contactMsg=array("messages"=>"Message Sent Successfully");
-echo json_encode($userdata);
-
-
+echo json_encode($contactMsg);
+} 
+if($userdata['action']=='review'){
+    unset($userdata['action']);
+    
+    $data->insert("reviews",$userdata);
+    
+    $contactMsg=array("messages"=>"Review Sent Successfully");
+    echo json_encode($contactMsg);
+} 
 
 
 

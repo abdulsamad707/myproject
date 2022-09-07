@@ -37,6 +37,7 @@ if(isset($_POST['submit'])){
            $register_array['email']=$email;
            $register_array['number']=$number;
            $register_array['password']=$pass;
+           $register_array["status"]=1;
            $post_register_array=json_encode($register_array);
       
            
