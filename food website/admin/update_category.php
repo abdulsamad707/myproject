@@ -12,18 +12,14 @@ if(!isset($admin_id)){
 
 if(isset($_POST['update'])){
 
-   $pid = $_POST['pid'];
-   $pid = filter_var($pid, FILTER_SANITIZE_STRING);
+   $cat_id = $_POST['pid'];
+   $pid = filter_var($cat_id, FILTER_SANITIZE_STRING);
    $name = $_POST['name'];
    $name = filter_var($name, FILTER_SANITIZE_STRING);
-   $price = $_POST['price'];
-   $price = filter_var($price, FILTER_SANITIZE_STRING);
-   $category = $_POST['category'];
-   $category = filter_var($category, FILTER_SANITIZE_STRING);
-   $keyword=$_POST['keyword'];
+
 
    $ch=curl_init();
-   curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/productsDetail.php?key=6CU1qSJfcs&productId=$pid");
+   curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/categories.php?key=6CU1qSJfcs&id=$pid");
    $header[]="Content-Type:applictaion/json";
    curl_setopt($ch,CURLOPT_POST,false);
    curl_setopt($ch, CURLOPT_FAILONERROR, true); 
@@ -31,28 +27,25 @@ if(isset($_POST['update'])){
    curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
    $result=curl_exec($ch);
 
-    if(isset($_FILES['image']['name'])){
+   if(isset($_FILES['image']['name'])){
    $image_name = $_FILES['image']['name'];
 
    $image_size = $_FILES['image']['size'];
    $image_tmp_name = $_FILES['image']['tmp_name'];
    $image_type = $_FILES['image']['type'];
-
+ 
    $image_folder = '../uploaded_img/'.$image_name;
     } 
-   if($image_name!=''&& isset($_FILES['image']['name'])){
+   if($image_name!='' &&  isset($_FILES['image']['name']) ){
    $cf = new CURLFile($image_tmp_name,$image_type,$image_name);
 
    $file_data['file']=$cf;
    } 
-   $file_data['productName']=$name;
-   $file_data['pid']=$pid;
-   $file_data['price']=$price;
-   $file_data['category']=$category;
+   $file_data['cat_name']=$name;
    $file_data["action"]="update";
-   $file_data["productKeyWord"]=$keyword;
+   $file_data['cat_id']=$cat_id;
    $ch=curl_init();
-   curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/product_add.php?key=6CU1qSJfcs");
+   curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/category_add.php?key=6CU1qSJfcs");
  
    curl_setopt($ch, CURLOPT_POST, 1);
  
@@ -61,7 +54,7 @@ if(isset($_POST['update'])){
    curl_setopt($ch, CURLOPT_POSTFIELDS, $file_data);
    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
    $server_product_update=curl_exec($ch);
-    
+   
     $server_product_update=json_decode($server_product_update,true);
    $messages=$server_product_update['message'];
    $message[]=$messages;
@@ -122,67 +115,42 @@ if(isset($_POST['update'])){
 
 <section class="update-product">
 
-   <h1 class="heading">update product</h1>
+   <h1 class="heading">update Category</h1>
 
    <?php
-      $pid = $_GET['update'];
+      $cid = $_GET['update'];
      
      
       $ch=curl_init();
-      curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/productsDetail.php?key=6CU1qSJfcs&productId=$pid");
+      curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/categories.php?key=6CU1qSJfcs&id=$cid");
       $header[]="Content-Type:applictaion/json";
       curl_setopt($ch,CURLOPT_POST,false);
       curl_setopt($ch, CURLOPT_FAILONERROR, true); 
       curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
       curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
       $result=curl_exec($ch);
-  
+
+
       $result= json_decode($result,true);
-         
-         foreach($result['data'] as $fetch_products){  
-            $image_Path= PRODUCT_IMAGE_PATH."/".$fetch_products['image'];
+    
+         foreach($result['productData']['data'] as $fetch_products){  
+            $image_Path= CATEGORY_IMAGE_PATH."/".$fetch_products['cat_image'];
    ?>
    <form action="" method="POST" enctype="multipart/form-data">
       <input type="hidden" name="pid" value="<?= $fetch_products['id']; ?>">
-      <input type="hidden" name="old_image" value="<?= $fetch_products['image']; ?>">
+
       <img src="<?=    $image_Path ; ?>" alt="">
       <span>update name</span>
-      <input type="text" required placeholder="enter product name" name="name" maxlength="100" class="box" value="<?= $fetch_products['name']; ?>">
-      <span>update price</span>
-      <input type="number" min="0" max="9999999999" required placeholder="enter product price" name="price" onkeypress="if(this.value.length == 10) return false;" class="box" value="<?= $fetch_products['price']; ?>">
-      <span>update category</span>
-
-       <?php
-      $ch=curl_init();
- curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/categories.php?key=6CU1qSJfcs");
- $header[]="Content-Type:applictaion/json";
- curl_setopt($ch,CURLOPT_POST,false);
- curl_setopt($ch, CURLOPT_FAILONERROR, true); 
- curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
- curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
- $result=curl_exec($ch);
- $result= json_decode($result,true);
-
-    ?>
-      <select name="category" class="box" required>
-         
-        
-          <?php
-            foreach($result['productData']['data'] as $categories ){
-            ?>
-         <option value="<?=$categories['cat_name']?>"><?= $categories['cat_name'] ?></option>
-         
-         <?php
-            }
-          ?>
-      </select>
-      <input type="text" value="<?=$fetch_products['productKeyWord'];?>" placeholder="KeyWord" name="keyword" maxlength="100" class="box">
+      <input type="text" required placeholder="enter catgory name" name="name" maxlength="100" class="box" value="<?= $fetch_products['cat_name']; ?>">
+   
+  
+     
       <span>update image</span>
 
       <input type="file" name="image" class="box" accept="image/jpg, image/jpeg, image/png, image/webp">
       <div class="flex-btn">
          <input type="submit" value="update" class="btn" name="update">
-         <a href="products.php" class="option-btn">go back</a>
+         <a href="categories" class="option-btn">go back</a>
       </div>
    </form>
    <?php

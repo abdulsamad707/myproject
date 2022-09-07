@@ -17,7 +17,7 @@ $productSearch = preg_replace("/[^A-Za-z0-9\-]/", '', $productSearch); // Remove
  // Removes special chars.
  if(isset($productSearch) && $productSearch!='' ){
         
-   $sql="SELECT * FROM products WHERE category like '%$productSearch%' or  name like '%$productSearch%' OR productKeyWord like '%$productSearch%' or soundex('$productSearch')=soundex(productKeyWord) or soundex('$productSearch')=soundex(name)";
+   $sql="SELECT   products.* FROM products  WHERE  products.category like '%$productSearch%' or  name like '%$productSearch%' OR productKeyWord like '%$productSearch%' or soundex('$productSearch')=soundex(productKeyWord) or soundex('$productSearch')=soundex(name)";
  }
  
  }
@@ -26,7 +26,7 @@ $productSearch = preg_replace("/[^A-Za-z0-9\-]/", '', $productSearch); // Remove
     $sql="SELECT * FROM `products` WHERE category = '$cate'";
     }
    if(!isset($_GET['cate']) && !isset($_GET['productSearch'])){
-      $sql="SELECT * FROM `products`";
+      $sql="SELECT products.* FROM `products`";
    }
 
 $productdatas=$data->sql($sql,'read');

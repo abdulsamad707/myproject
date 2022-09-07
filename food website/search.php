@@ -65,8 +65,11 @@ include 'components/add_cart.php';
          curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
          curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
          $result=curl_exec($ch);
-        $result=json_decode($result,true);
 
+        
+      
+        $result=json_decode($result,true);
+ 
      
 
 
@@ -76,6 +79,7 @@ include 'components/add_cart.php';
 
    
          if($result['productData']['totalRecord'] > 0){
+                
             foreach($result['productData']['data'] as $fetch_products){
                $product_image_path=PRODUCT_IMAGE_PATH."/".$fetch_products['image'];
                $product_status=$fetch_products['productStatus'];

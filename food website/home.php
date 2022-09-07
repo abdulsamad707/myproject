@@ -94,26 +94,29 @@ include 'components/add_cart.php';
 
    <div class="box-container">
 
-      <a href="category?category=fastfood" class="box">
-         <img src="images/cat-1.png" alt="">
-         <h3>fast food</h3>
-      </a>
+   <?php
+   $ch=curl_init();
+ curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/categories.php?key=6CU1qSJfcs");
+ $header[]="Content-Type:applictaion/json";
+ curl_setopt($ch,CURLOPT_POST,false);
+ curl_setopt($ch, CURLOPT_FAILONERROR, true); 
+ curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+ curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+ $result_cat=curl_exec($ch);
+ $result_cat= json_decode($result_cat,true);
 
-      <a href="category?category=maindish" class="box">
-         <img src="images/cat-2.png" alt="">
-         <h3>pakistani dish</h3>
-      </a>
+    foreach($result_cat['productData']['data'] as $categories){
+   $image_Path=CATEGORY_IMAGE_PATH."/".$categories['cat_image'];
 
-      <a href="category?category=drinks" class="box">
-         <img src="images/cat-3.png" alt="">
-         <h3>drinks</h3>
+     ?>
+      
+      <a href="category?category=<?=$categories['cat_name']; ?>" class="box">
+         <img src="<?=$image_Path;?>" alt="">
+         <h3><?=$categories['cat_name']; ?></h3>
       </a>
-
-      <a href="category.php?category=desserts" class="box">
-         <img src="images/cat-4.png" alt="">
-         <h3>desserts</h3>
-      </a>
-
+      <?php
+      }
+     ?>
    </div>
 
 </section>

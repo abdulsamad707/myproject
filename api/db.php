@@ -58,7 +58,7 @@ $db=$this->pdo;
               
                    if(gettype($whereCondition)=='array'){
                      $whereConditions='';
-                  $whereCondition=   array_unique($whereCondition);
+                
                        if(count($whereCondition) > 1){
                          foreach ($whereCondition  as $key => $value){
                                   

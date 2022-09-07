@@ -13,7 +13,8 @@ if (!isset($status))
     $userdata = file_get_contents("php://input");
 
     $productData = $_POST;
-    extract($_POST);
+   
+     extract($productData);
 
     $productData['name'] = $productName;
     $productData['productStatus'] = 1;
@@ -23,7 +24,7 @@ if (!isset($status))
     $sql_check_product_data = $data->sql($sql_check_product, "read");
 
     $totalProduct = $sql_check_product_data['totalRecord'];
-    if ($totalProduct < 1)
+    if($pid== "")
     {
         $fileName = $_FILES['file']['name'];
         $fileSize = $_FILES['file']['size'];
@@ -31,24 +32,26 @@ if (!isset($status))
         $ext = pathinfo($fileName, PATHINFO_EXTENSION);
         $file = rand() . "." . $ext;
         $productData['image'] = $file;
+           if($totalProduct==0){
+            unset($productData['pid']);
         $insertProduct = $data->insert("products", $productData);
         $insertProduct['message'] = "Product Added Into The Store Successfully";
         
         move_uploaded_file($tmpName, 'productImage/' . $file);
+           }else{
+            $insertProduct['message'] = "Product Already Exists";
+           }
 
     }
     else
     {
 
-        if ($action == "add")
-        {
-            $insertProduct['message'] = "Product Already Exists";
-        }
-        else
-        {
-
-            $image_old = $sql_check_product_data['data'][0]['image'];
-            $product_id = $sql_check_product_data['data'][0]['id'];
+        $sql_check_product = "SELECT * FROM products WHERE id='$pid'";
+        $sql_check_product_data = $data->sql($sql_check_product, "read");
+          $image_old=$sql_check_product_data['data'][0]['image'];
+          
+      
+            
             if (isset($_FILES['file']['name']))
             {
                 $fileName = $_FILES['file']['name'];
@@ -65,13 +68,14 @@ if (!isset($status))
                 $productData['image'] = $image_old;
 
             }
-            $data_update = $data->updateData("products", $productData, ["id" => "'$product_id'"]);
+              unset($productData['pid']);
+            $data_update = $data->updateData("products", $productData, ["id" => "'$pid'"]);
         
             $insertProduct['message'] = "Product Updated";
      
 
  
-        }
+         
 
     }
     echo json_encode($insertProduct);

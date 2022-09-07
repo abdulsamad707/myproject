@@ -9,7 +9,11 @@ ob_start();
 if (!isset($status))
 {
   $id=$_GET['productId'];
- $productData= $data->getData('products',null,null,['id'=>"'$id'"],null,null,null);
+  $sql="SELECT products.* FROM `products` WHERE  products.id='$id'";
+  $productData=$data->sql($sql,"read");
+
+
+
  echo json_encode($productData);
 
 

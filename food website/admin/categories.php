@@ -10,16 +10,14 @@ if(!isset($admin_id)){
    header('location:admin_login');
 };
 
-if(isset($_POST['add_product'])){
+if(isset($_POST['add_category'])){
 
-   $name = $_POST['name'];
-   $name = filter_var($name, FILTER_SANITIZE_STRING);
-   $price = $_POST['price'];
-   $price = filter_var($price, FILTER_SANITIZE_STRING);
-   $category = $_POST['category'];
-   $category = filter_var($category, FILTER_SANITIZE_STRING);
 
-   $keyword=$_POST['keyword'];
+     unset($_POST['add_category']);
+    
+
+ 
+
    $image_name= $_FILES['image']['name'];
 
    $image_size = $_FILES['image']['size'];
@@ -31,15 +29,22 @@ if(isset($_POST['add_product'])){
   $dataProduct=$_POST;
   $file=$_FILES;
   $ch=curl_init();
-  $file_data=array("file"=>$cf,
-  "productKeyWord"=>$keyword,"productName"=>$name,
-  'price'=>$price,'category'=>$category,"action"=>"add","pid"=>"");
+  /*
+  $file_data=array("file"=>$cf,"productKeyWord"=>$keyword,"productName"=>$name,'price'=>$price,'category'=>$category,"action"=>"add");
+     */
+$file_data=$_POST;
+  $file_data['file']=$cf;
+  $file_data["action"]="add";
+  $file_data['cat_id']="";
+  
+
+
 
  
 /*
 
   */
-  curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/product_add.php?key=6CU1qSJfcs");
+  curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/category_add.php?key=6CU1qSJfcs");
 
   curl_setopt($ch, CURLOPT_POST, 1);
 
@@ -60,7 +65,7 @@ if(isset($_POST['add_product'])){
        
 
          $server_product_add=curl_exec($ch);
-     
+        
          $server_product_add=json_decode($server_product_add,true);
          $messages=$server_product_add['message'];
          $message[]=$messages;
@@ -76,11 +81,12 @@ if(isset($_GET['update_status'])){
    $status_action=$_GET['status_action'];
    $ch=curl_init();
    /*curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/productsDetail.php?key=6CU1qSJfcs");*/
-   curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/productsStatus.php?key=6CU1qSJfcs");
+   curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/categoriesStatus.php?key=6CU1qSJfcs");
    curl_setopt($ch, CURLOPT_POST, 1);
      $product_data['product_id']=$_GET['update_status'];
      $product_data['status_action']=$_GET['status_action'];
        $product_data=json_encode($product_data);
+       
    curl_setopt($ch, CURLOPT_POSTFIELDS, $product_data);
    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
    $server_product_add=curl_exec($ch);
@@ -98,7 +104,7 @@ if(isset($_GET['update_status'])){
    
 
      
-   header('location:products');
+   header('location:categories');
 
 }
 
@@ -110,7 +116,7 @@ if(isset($_GET['update_status'])){
    <meta charset="UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>products</title>
+   <title>Categories</title>
 
    <!-- font awesome cdn link  -->
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
@@ -128,35 +134,10 @@ if(isset($_GET['update_status'])){
 <section class="add-products">
 
    <form action="" method="POST" enctype="multipart/form-data">
-      <h3>add product</h3>
-      <input type="text" required placeholder="enter product name" name="name" maxlength="100" class="box">
-      <input type="number" min="0" max="9999999999" required placeholder="enter product price" name="price" onkeypress="if(this.value.length == 10) return false;" class="box">
-      <select name="category" class="box" required>
-     
-      <?php
-
-         $ch=curl_init();
- curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/categories.php?key=6CU1qSJfcs");
- $header[]="Content-Type:applictaion/json";
- curl_setopt($ch,CURLOPT_POST,false);
- curl_setopt($ch, CURLOPT_FAILONERROR, true); 
- curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
- curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
- $result=curl_exec($ch);
- $result= json_decode($result,true);
-
-            foreach($result['productData']['data'] as $categories ){
-            ?>
-         <option value="<?=$categories['cat_name']?>"><?= $categories['cat_name'] ?></option>
-         
-         <?php
-            }
-          ?>
-      
-      </select>
-      <input type="text" required placeholder="KeyWord" name="keyword" maxlength="100" class="box">
+      <h3>add Category</h3>
+      <input type="text" required placeholder="enter category name" name="cat_name" maxlength="100" class="box">
       <input type="file" name="image" class="box" accept="image/jpg, image/jpeg, image/png, image/webp" required>
-      <input type="submit" value="add product" name="add_product" class="btn">
+      <input type="submit" value="add Category" name="add_category" class="btn">
    </form>
 
 </section>
@@ -171,7 +152,7 @@ if(isset($_GET['update_status'])){
 
    <?php
  $ch=curl_init();
- curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/products.php?key=6CU1qSJfcs");
+ curl_setopt($ch,CURLOPT_URL,"http://localhost/project/api/categories.php?key=6CU1qSJfcs");
  $header[]="Content-Type:applictaion/json";
  curl_setopt($ch,CURLOPT_POST,false);
  curl_setopt($ch, CURLOPT_FAILONERROR, true); 
@@ -185,21 +166,19 @@ if(isset($_GET['update_status'])){
       if($result['productData']['totalRecord'] > 0){
          foreach($result['productData']['data'] as $fetch_products){  
 
-           $image_Path= PRODUCT_IMAGE_PATH."/".$fetch_products['image'];
+
+$image_Path=CATEGORY_IMAGE_PATH."/".$fetch_products['cat_image'];
    ?>
    <div class="box">
       <img src="<?=$image_Path; ?>" alt="">
-      <div class="flex">
-         <div class="price"><span>Rs </span><?= $fetch_products['price']; ?><span>/-</span></div>
-         <div class="category"><?= $fetch_products['category']; ?></div>
-      </div>
-      <div class="name"><?= $fetch_products['name']; ?></div>
+   
+      <div class="name"><?= $fetch_products['cat_name']; ?></div>
       <div class="flex-btn">
-         <a href="update_product?update=<?= $fetch_products['id']; ?>" class="option-btn">update</a>
+         <a href="update_category?update=<?= $fetch_products['id']; ?>" class="option-btn">update</a>
 
 
          <?php
-       $statusProduct= $fetch_products['productStatus'];
+       $statusProduct= $fetch_products['cat_status'];
               if($statusProduct!=1){
               $btnClass= "delete-btn";
               $btnClassAct="Inactive";
@@ -211,13 +190,13 @@ if(isset($_GET['update_status'])){
               }
            ?>
          
-         <a href="products.php?update_status=<?= $fetch_products['id']; ?>&status_action=<?=$statusAct;?>" class="<?=$btnClass; ?>" onclick="return confirm('update the statius of product?');"><?= $btnClassAct;?></a>
+         <a href="categories?update_status=<?= $fetch_products['id']; ?>&status_action=<?=$statusAct;?>" class="<?=$btnClass; ?>" onclick="return confirm('update the statius of product?');"><?= $btnClassAct;?></a>
       </div>
    </div>
    <?php
          }
       }else{
-         echo '<p class="empty">no products added yet!</p>';
+         echo '<p class="empty">no Categires added yet!</p>';
       }
    ?>
 

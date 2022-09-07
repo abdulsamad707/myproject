@@ -94,7 +94,16 @@ if(!isset($admin_id)){
       <p>products added</p>
       <a href="products" class="btn">see products</a>
    </div>
-
+   <div class="box">
+      <?php
+         $select_products = $conn->prepare("SELECT * FROM `categories`");
+         $select_products->execute();
+         $numbers_of_products = $select_products->rowCount();
+      ?>
+      <h3><?= $numbers_of_products; ?></h3>
+      <p>categories added</p>
+      <a href="categories" class="btn">see categories</a>
+   </div>
    <div class="box">
       <?php
          $select_users = $conn->prepare("SELECT * FROM `users`");
