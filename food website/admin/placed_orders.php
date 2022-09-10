@@ -14,7 +14,8 @@ if(isset($_POST['update_payment'])){
 
    $order_id = $_POST['order_id'];
    $payment_status = $_POST['payment_status'];
-  
+  print_r($_POST);
+  die();
    $ch=curl_init();
    curl_setopt($ch, CURLOPT_URL,"http://localhost/project/api/update_order.php?key=6CU1qSJfcs");
    curl_setopt($ch, CURLOPT_POST, 1);
@@ -101,6 +102,7 @@ $result= json_decode($result,true);
             <option value="<?= $fetch_orders['payment_status']; ?>" selected ><?= $fetch_orders['payment_status']; ?></option>
             <option value="pending">pending</option>
             <option value="completed">completed</option>
+            <option value="cancel">cancel</option>
          </select>
          <div class="flex-btn">
             <input type="submit" value="update" class="btn" name="update_payment">

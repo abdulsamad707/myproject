@@ -75,7 +75,7 @@ $result= json_decode($result,true);
          <a href="quick_view?pid=<?= $fetch_products['id']; ?>" class="fas fa-eye"></a>
          <button type="submit" class="fas fa-shopping-cart" name="add_to_cart"></button>
          <img src="<?= $product_image_path; ?>" alt="">
-         <a href="category.php?category=<?= $fetch_products['category']; ?>" class="cat"><?= $fetch_products['cat_name']; ?></a>
+         <a href="category.php?category=<?= $fetch_products['category']; ?>" class="cat"><?= $fetch_products['category']; ?></a>
          <div class="name"><?= $fetch_products['name']; ?></div>
          <div class="flex">
             <div class="price"><span>Rs</span><?= $fetch_products['price']; ?></div>

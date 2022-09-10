@@ -79,7 +79,14 @@ if(isset($_SESSION['user_id'])){
       <p>payment method : <span><?= $fetch_orders['method']; ?></span></p>
       <p>your orders : <span><?= $fetch_orders['total_products']; ?></span></p>
       <p>total price : <span>Rs <?= $fetch_orders['total_price']; ?>/-</span></p>
-      <p> payment status : <span style="color:<?php if($fetch_orders['payment_status'] == 'pending'){ echo 'red'; }else{ echo 'green'; }; ?>"><?= $fetch_orders['payment_status']; ?></span> </p>
+      <p> order status : <span style="color:<?php if($fetch_orders['payment_status'] == 'pending'){ echo 'red'; }else{ echo 'green'; }; ?>"><?= $fetch_orders['payment_status']; ?>
+      <?php if($fetch_orders['payment_status'] == 'pending'){
+         ?>
+
+         <a href="cancel?order_id=<?=$fetch_orders['id'];?>" class="delete-btn">Cancel</a>
+         <?php
+      }?>
+   </span> </p>
    </div>
    <?php
       }
